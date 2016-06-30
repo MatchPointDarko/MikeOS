@@ -12,7 +12,7 @@ read_port:
 ; arg: int, (dx)port number
 ;      int, (al)value to write
 write_port:
-	mov   edx, [esp + 4]    
-	mov   al, [esp + 4 + 4]  
+	mov   edx, [esp + 4]
+	mov   al, [esp + 4 + 4]
 	out   dx, al  
 	ret

@@ -76,5 +76,6 @@ void idt_init()
 {
 	initialize_pic();
 	initialize_idt_pointer();
-	load_idt(&idt_ptr);
+	asm("lidt [idt_ptr]");
+	asm("sti");
 }

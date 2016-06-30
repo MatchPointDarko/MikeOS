@@ -1,11 +1,11 @@
 section .text
 
 global keyboard_handler
-extern keyboard_handler_main
+extern keyboard_irq
 
 keyboard_handler:
     pushad
     cld
-	call    keyboard_handler_main
+	call    keyboard_irq
     popad
 	iretd

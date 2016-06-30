@@ -56,7 +56,7 @@ void keyboard_init(void)
 	write_port(0x21 , 0xFD);
 }
 
-void keyboard_handler_main(void)
+void keyboard_irq(void)
 {
     char keycode;
     unsigned char status;

@@ -15,11 +15,11 @@ KERNEL_NAME:=kernel
 KERNEL_OUTPUT_DIR:=../output/
 KERNEL_PATH:=$(KERNEL_OUTPUT_DIR)$(KERNEL_NAME)
 
-C_OBJECTS:=$(shell find . -name *.c)
+C_OBJECTS+=$(shell find ../ -name *.c)
 ASM_OBJECTS:=$(shell find . -name *.asm)
 
 COMPILATION_DIR:=./compilation
-VPATH:=main:idt:port_io:terminal:harddrive:mm
+VPATH:=main:idt:port_io:terminal:harddrive:mm:../libc
 
 C_OBJECT_FILES:=$(patsubst %.c, $(COMPILATION_DIR)/%.o, $(notdir $(C_OBJECTS)) )
 ASM_OBJECT_FILES:=$(patsubst %.asm, $(COMPILATION_DIR)/%.o, $(notdir $(ASM_OBJECTS)))
@@ -59,4 +59,4 @@ clean:
 	rm $(KERNEL_PATH)
 
 run: 
-	qemu-system-i386 -kernel $(KERNEL_PATH) -hda ./shit
+	qemu-system-i386 -kernel $(KERNEL_PATH) -m 256M

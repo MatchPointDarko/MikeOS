@@ -14,8 +14,7 @@ section .text
 start:
   cli 			;block interrupts
   mov esp, stack_space	;set stack pointer
-  mov eax, [esp + 4]
-  push eax
+  push ebx ; grub boot info
   call kmain
 
 loop:
@@ -23,5 +22,5 @@ loop:
   jmp loop
 
 section .bss
-resb 8192		;8KB for stack
+resb 8192 ;8KB for stack
 stack_space:
