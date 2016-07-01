@@ -12,6 +12,7 @@ SECTIONS
    .init ALIGN(4K) : AT(ADDR(.init) - KERNEL_VIRTUAL_OFFSET)
                           { *(.multiboot);
                             *(.init);
+                            *(.tables);
                           }
     end_init = .;
     init_page_table_start = .;

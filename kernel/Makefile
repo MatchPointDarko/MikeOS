@@ -59,4 +59,4 @@ clean:
 	rm $(KERNEL_PATH)
 
 run: 
-	qemu-system-i386 -kernel $(KERNEL_PATH) -m 256M
+	qemu-system-i386 -s -S -kernel $(KERNEL_PATH) -m 256M

@@ -18,21 +18,20 @@ typedef int page_table_t;
 typedef int page_pointer_t;
 
 page_table_t kernel_page_directory[PAGE_DIR_SIZE]
-__attribute__((aligned(PAGE_SIZE)));
+__attribute__((aligned(PAGE_SIZE))) __attribute__((section(".tables")));
 
 page_pointer_t kernel_page_tables[PAGE_TABLE_SIZE]
-__attribute__((aligned(PAGE_SIZE)));
+__attribute__((aligned(PAGE_SIZE))) __attribute__((section(".tables")));
 
 page_pointer_t identity_page_table[PAGE_TABLE_SIZE]
-__attribute__((aligned(PAGE_SIZE)));
-
+__attribute__((aligned(PAGE_SIZE))) __attribute__((section(".tables")));
 
 /* Identity map the low 1M
  * In early boot stage.
  */
- static void __attribute__((section(".init"))) map_identity()
+static void __attribute__((section(".init"))) map_identity()
 {
-   memset(0, identity_page_table, PAGE_TABLE_SIZE);
+   //memset(0, identity_page_table, PAGE_TABLE_SIZE);
 
    unsigned int current_page = 0;
    for(int i = 0; i < BIOS_PAGE_TABLE_ENTRIES; i++, current_page += PAGE_SIZE)
@@ -78,7 +77,6 @@ __attribute__((section(".init"))) static void map_kernel_memory()
 
 __attribute__((section(".init"))) static inline void enable_paging()
 {
-   //TODO: Find a better solution for the magic number...
    asm("mov eax, kernel_page_directory");
 
    asm("mov cr3, eax");
@@ -93,7 +91,7 @@ __attribute__((section(".init"))) void paging_init()
 {
    map_identity();
 
-   map_kernel_memory();
+   //map_kernel_memory();
 
    enable_paging();
 }
