@@ -17,8 +17,8 @@ struct gdt_ptr
 } __attribute__((packed));
 
 /* Our GDT, with 3 entries, and finally our special GDT pointer */
-struct gdt_entry gdt[3];
-struct gdt_ptr gp;
+struct gdt_entry __attribute__((section(".init"))) gdt[3];
+struct gdt_ptr __attribute__((section(".init"))) gp;
 
 static void set_gdt_gate(int num, unsigned long base, unsigned long limit, unsigned char access, unsigned char gran)
 {

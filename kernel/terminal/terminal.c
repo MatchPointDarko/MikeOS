@@ -8,6 +8,7 @@
 #define SCREEN_ROWS 25
 
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof(arr[0]))
+#define INIT_SEC(dec) __attribute__((section(".init"))) dec
 
 enum vga_color { COLOR_BLACK = 0,
 	COLOR_BLUE = 1,

@@ -1,6 +1,7 @@
 #include "stdio.h"
 #include "memory.h"
 #include "physical_mm_manager.h"
+#include "external_linker_symbols.h"
 
 #define PAGE_SIZE 4096 //4KB
 #define NO_AVAILABLE_PAGE -1
@@ -12,11 +13,6 @@
                                          (PAGE_ALIGN(managed_memory_start_addr)))
 
 #define NULL (void*)0
-
-extern unsigned long kernel_start;
-extern unsigned long kernel_end;
-
-#define KERNEL_SIZE ((unsigned long)&kernel_end - (unsigned long)&kernel_start)
 
 static char* bitmap = (char*)0;
 unsigned long current_free_page_index = 0;
@@ -40,7 +36,8 @@ void map_memory(multiboot_memory_map_t* map_addr, unsigned int map_length)
                 if(map_iterator->addr <= (unsigned long)&kernel_start &&
                      (unsigned long)&kernel_start <= (map_iterator->addr + map_iterator->len))
                 {
-                    bitmap = ((char*)&kernel_start) + KERNEL_SIZE;
+                    //bitmap will contain virtual address.
+                    bitmap = ((char*)&kernel_end + KERNEL_VIRTUAL_OFFSET);
                     free_memory_size += map_iterator->len - KERNEL_SIZE;
                     found_first_available = 1;
                 }
@@ -56,7 +53,8 @@ void map_memory(multiboot_memory_map_t* map_addr, unsigned int map_length)
     //Reserve for bitmap.
     free_memory_size -= bitmap_size;
 
-    managed_memory_start_addr = (unsigned long)bitmap + bitmap_size;
+    //Managed must be physical!!!
+    managed_memory_start_addr = ((unsigned long)bitmap + bitmap_size) - KERNEL_VIRTUAL_OFFSET;
 
     memset(PAGE_AVAILABLE, bitmap, bitmap_size);
 }

@@ -23,8 +23,8 @@ struct idt_pointer
 	unsigned int base;
 } __attribute__((packed));
 
-struct idt_entry idt_table[IDT_SIZE];
-struct idt_pointer idt_ptr;
+struct idt_entry __attribute__((section(".init"))) idt_table[IDT_SIZE];
+struct idt_pointer __attribute__ ((section(".init"))) idt_ptr;
 
 void load_idt_entry(char isr_number, unsigned long base, short int selector, char flags)
 {

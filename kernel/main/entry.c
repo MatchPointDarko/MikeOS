@@ -10,7 +10,6 @@
 
 void kmain(struct multiboot_info* info)
 {
-
     flush_screen();
     load_gdt();
 
