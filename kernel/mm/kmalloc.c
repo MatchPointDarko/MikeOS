@@ -1,6 +1,7 @@
 /* Memory allocator, using K&R algorithm
  */
 #include "kmalloc.h"
+#include "paging_manager.h"
 #include "physical_mm_manager.h"
 
 #define PAGE_SIZE 4096
@@ -23,7 +24,7 @@ static block_header_t* free_blocks = NULL;
 static void* increase_heap_size()
 {
    block_header_t* insert = NULL;
-   void* free_page = kernel_physical_to_virtual(allocate_physical_page());
+   void* free_page = allocate_kernel_virtual_page();
 
    if(free_page == NULL)
    {

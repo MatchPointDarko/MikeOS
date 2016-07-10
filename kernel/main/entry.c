@@ -7,7 +7,8 @@
 #include "stdio.h"
 #include "keyboard_driver.h"
 #include "multiboot_info.h"
-#include "mm_manager.h"
+#include "physical_mm_manager.h"
+#include "paging_manager.h"
 #include "logger.h"
 
 void kmain(struct multiboot_info* info)
@@ -21,13 +22,15 @@ void kmain(struct multiboot_info* info)
     log_print(LOG_INFO, "Remaping the GDT, after virtual memory init");
     remap_gdt();
 
+    log_print(LOG_INFO, "Initializing virtual memory manager");
+    virtual_memory_manager_init();
+
     log_print(LOG_INFO, "Initializing IDT");
     idt_init();
 
     log_print(LOG_INFO, "Initializing keyboard driver");
     keyboard_init();
 
-    printf("%x\n", kmalloc(sizeof(char)));
     while(1)
         asm("hlt");
 }

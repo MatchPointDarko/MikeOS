@@ -12,33 +12,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="727c824f-6054-4f6d-b588-c7399d5ebaf3" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/bitmap_manipulation.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/common.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/kmalloc.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/logger.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/kernel/logging/logger.c" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/kernel/mm/bitmap_manipulation.c" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/kernel/mm/kmalloc.c" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/kernel/mm/virtual_mm_manager.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/output/kernel" afterPath="$PROJECT_DIR$/output/kernel" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/include/bitmap_manipulation.h" afterPath="$PROJECT_DIR$/include/bitmap_manipulation.h" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/include/external_linker_symbols.h" afterPath="$PROJECT_DIR$/include/external_linker_symbols.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/include/gdt.h" afterPath="$PROJECT_DIR$/include/gdt.h" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/include/paging_manager.h" afterPath="$PROJECT_DIR$/include/paging_manager.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/include/physical_mm_manager.h" afterPath="$PROJECT_DIR$/include/physical_mm_manager.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/include/stdio.h" afterPath="$PROJECT_DIR$/include/stdio.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/include/terminal.h" afterPath="$PROJECT_DIR$/include/terminal.h" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kernel/Makefile" afterPath="$PROJECT_DIR$/kernel/Makefile" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kernel/idt/idt.c" afterPath="$PROJECT_DIR$/kernel/idt/idt.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kernel/idt/keyboard_driver.c" afterPath="$PROJECT_DIR$/kernel/idt/keyboard_driver.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kernel/link.ld" afterPath="$PROJECT_DIR$/kernel/link.ld" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kernel/main/entry.c" afterPath="$PROJECT_DIR$/kernel/main/entry.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kernel/main/entry_asm.asm" afterPath="$PROJECT_DIR$/kernel/main/entry_asm.asm" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kernel/mm/gdt.c" afterPath="$PROJECT_DIR$/kernel/mm/gdt.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kernel/mm/bitmap_manipulation.c" afterPath="$PROJECT_DIR$/kernel/mm/bitmap_manipulation.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kernel/mm/kmalloc.c" afterPath="$PROJECT_DIR$/kernel/mm/kmalloc.c" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kernel/mm/paging_manager.c" afterPath="$PROJECT_DIR$/kernel/mm/paging_manager.c" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kernel/mm/physical_mm_manager.c" afterPath="$PROJECT_DIR$/kernel/mm/physical_mm_manager.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kernel/terminal/terminal.c" afterPath="$PROJECT_DIR$/kernel/terminal/terminal.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libc/stdio.c" afterPath="$PROJECT_DIR$/libc/stdio.c" />
     </list>
     <ignored path="mike_os.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -59,41 +41,31 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="paging_manager.c" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/kernel/mm/paging_manager.c">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="558">
+              <caret line="193" column="44" selection-start-line="193" selection-start-column="44" selection-end-line="193" selection-end-column="44" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="bitmap_manipulation.c" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/kernel/mm/bitmap_manipulation.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+            <state relative-caret-position="209">
+              <caret line="19" column="33" selection-start-line="19" selection-start-column="33" selection-end-line="19" selection-end-column="33" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="bitmap_manipulation.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/include/bitmap_manipulation.h">
+      <file leaf-file-name="entry.c" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/kernel/main/entry.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
-              <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="paging_manager.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/include/paging_manager.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="126">
-              <caret line="7" column="6" selection-start-line="7" selection-start-column="6" selection-end-line="7" selection-end-column="6" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="physical_mm_manager.c" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/kernel/mm/physical_mm_manager.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="612">
-              <caret line="122" column="0" selection-start-line="122" selection-start-column="0" selection-end-line="122" selection-end-column="0" />
+            <state relative-caret-position="479">
+              <caret line="33" column="0" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -132,7 +104,6 @@
         <option value="$PROJECT_DIR$/libc/string.c" />
         <option value="$PROJECT_DIR$/include/mm_manager.h" />
         <option value="$PROJECT_DIR$/include/memory.h" />
-        <option value="$PROJECT_DIR$/include/external_linker_symbols.h" />
         <option value="$PROJECT_DIR$/libc/memory.c" />
         <option value="$PROJECT_DIR$/kernel/link.ld" />
         <option value="$PROJECT_DIR$/kernel/port_io/port_io.asm" />
@@ -152,12 +123,13 @@
         <option value="$PROJECT_DIR$/kernel/mm/virtual_mm_manager.c" />
         <option value="$PROJECT_DIR$/include/common.h" />
         <option value="$PROJECT_DIR$/include/paging_manager.h" />
-        <option value="$PROJECT_DIR$/kernel/main/entry.c" />
-        <option value="$PROJECT_DIR$/kernel/mm/kmalloc.c" />
-        <option value="$PROJECT_DIR$/kernel/mm/paging_manager.c" />
-        <option value="$PROJECT_DIR$/kernel/mm/bitmap_manipulation.c" />
         <option value="$PROJECT_DIR$/include/bitmap_manipulation.h" />
+        <option value="$PROJECT_DIR$/kernel/mm/bitmap_manipulation.c" />
+        <option value="$PROJECT_DIR$/kernel/mm/kmalloc.c" />
+        <option value="$PROJECT_DIR$/include/external_linker_symbols.h" />
         <option value="$PROJECT_DIR$/kernel/mm/physical_mm_manager.c" />
+        <option value="$PROJECT_DIR$/kernel/mm/paging_manager.c" />
+        <option value="$PROJECT_DIR$/kernel/main/entry.c" />
       </list>
     </option>
   </component>
@@ -650,14 +622,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/include/mm_manager.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="31" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/kernel/CMakeLists.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="72">
@@ -841,14 +805,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/include/external_linker_symbols.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="468">
-          <caret line="26" column="39" selection-start-line="26" selection-start-column="39" selection-end-line="26" selection-end-column="39" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/include/common.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="108">
@@ -857,42 +813,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/kernel/mm/kmalloc.c">
+    <entry file="file://$PROJECT_DIR$/include/mm_manager.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="9" column="3" selection-start-line="9" selection-start-column="3" selection-end-line="9" selection-end-column="3" />
+        <state relative-caret-position="18">
+          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/kernel/main/entry.c">
+    <entry file="file://$PROJECT_DIR$/kernel/mm/physical_mm_manager.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="479">
-          <caret line="29" column="4" selection-start-line="29" selection-start-column="4" selection-end-line="29" selection-end-column="4" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/kernel/mm/paging_manager.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="36">
-          <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/kernel/mm/bitmap_manipulation.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/include/bitmap_manipulation.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+        <state relative-caret-position="162">
+          <caret line="74" column="0" selection-start-line="74" selection-start-column="0" selection-end-line="74" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -900,15 +832,55 @@
     <entry file="file://$PROJECT_DIR$/include/paging_manager.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="126">
-          <caret line="7" column="6" selection-start-line="7" selection-start-column="6" selection-end-line="7" selection-end-column="6" />
+          <caret line="7" column="5" selection-start-line="7" selection-start-column="5" selection-end-line="7" selection-end-column="5" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/kernel/mm/physical_mm_manager.c">
+    <entry file="file://$PROJECT_DIR$/include/bitmap_manipulation.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="612">
-          <caret line="122" column="0" selection-start-line="122" selection-start-column="0" selection-end-line="122" selection-end-column="0" />
+        <state relative-caret-position="144">
+          <caret line="8" column="28" selection-start-line="8" selection-start-column="28" selection-end-line="8" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/external_linker_symbols.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/kernel/mm/kmalloc.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="3" column="26" selection-start-line="3" selection-start-column="26" selection-end-line="3" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/kernel/mm/paging_manager.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="558">
+          <caret line="193" column="44" selection-start-line="193" selection-start-column="44" selection-end-line="193" selection-end-column="44" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/kernel/mm/bitmap_manipulation.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="19" column="33" selection-start-line="19" selection-start-column="33" selection-end-line="19" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/kernel/main/entry.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="479">
+          <caret line="33" column="0" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
           <folding />
         </state>
       </provider>

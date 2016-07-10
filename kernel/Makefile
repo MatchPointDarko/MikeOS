@@ -51,12 +51,15 @@ assemble: $(ASM_OBJECT_FILES)
 compile: $(C_OBJECT_FILES)
 
 # Link and remove object files
-link: $(COMPILATION_DIR) compile assemble
+link: $(KERNEL_OUTPUT_DIR) $(COMPILATION_DIR) compile assemble
 	ld $(LD_FLAGS) $(LD_SCRIPT) -o $(KERNEL_PATH) $(C_OBJECT_FILES) $(ASM_OBJECT_FILES)
 	rm -rf $(COMPILATION_DIR)
 
 clean: 
 	rm $(KERNEL_PATH)
 
-run: 
-	qemu-system-i386 -kernel $(KERNEL_PATH) 
+run:
+	qemu-system-i386 -kernel $(KERNEL_PATH)
+
+run_debug: 
+	qemu-system-i386 -kernel $(KERNEL_PATH) -monitor telnet:127.0.0.1:1234,server,nowait -d cpu_reset

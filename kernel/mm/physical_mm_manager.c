@@ -8,20 +8,15 @@
 #include "common.h"
 
 #define PAGE_SIZE 4096 //4KB
-#define NO_AVAILABLE_PAGE -1
 #define PAGE_UNAVAILABLE 0x00
 #define PAGE_AVAILABLE 0xFF
-#define PAGE_ALIGN(value) ((unsigned long)value) & ~(PAGE_SIZE - 1)
-#define MANAGED_MEMORY_PAGE_ALIGN(value) (PAGE_ALIGN(value)) + \
-                                         (managed_memory_start_addr - \
-                                         (PAGE_ALIGN(managed_memory_start_addr)))
 
 /*TODO: The memory mapping assumes there are no HOLES in ram.
  * i.e., computes the next available physical page, according
  * to an index and the base, consider holes in ram.
  */
 static char* bitmap = NULL;
-unsigned long current_free_page_index = 0;
+static unsigned long current_free_page_index = 0;
 static unsigned long bitmap_size = 0;
 static unsigned long managed_memory_start_addr = 0;
 static unsigned long free_memory_size = 0;
@@ -77,7 +72,6 @@ void memory_manager_init(multiboot_memory_map_t* map_addr, unsigned int map_leng
     map_memory(map_addr, map_length);
 }
 
-
 /* Set the current free page index to the next free page,
  * Since it was allocated.
  */
@@ -96,7 +90,7 @@ void* allocate_physical_page()
 
     void* free_page_addr = (void*)(managed_memory_start_addr + (PAGE_SIZE * (current_free_page_index)));
 
-    set_next_free_page_index(&current_free_page_index);
+    set_next_free_page_index(bitmap, bitmap_size, &current_free_page_index);
 
     return free_page_addr;
 }
@@ -108,7 +102,7 @@ void free_physical_page(void* page_addr)
         return;
     }
 
-    unsigned long bit_index = address_to_bit_index(page_addr, managed_memory_start_addr);
+    unsigned long bit_index = address_to_bit_index(page_addr, (void*)managed_memory_start_addr);
 
     unsigned long bit_location = bit_index % (sizeof(char) * 8);
     unsigned long bitmap_index = bit_index_to_byte_index(bit_index);
