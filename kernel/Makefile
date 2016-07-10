@@ -5,7 +5,7 @@ INCLUDE_DIR:=../include
 INCLUDE_FLAG:=-I$(INCLUDE_DIR)
 
 ASM_FLAGS:=-g -f elf32
-GCC_FLAGS:=-g -ffreestanding -masm=intel -fno-stack-protector 
+GCC_FLAGS:=-std=gnu11 -g -ffreestanding -masm=intel -fno-stack-protector 
 GCC_FLAGS:= $(GCC_FLAGS) -m32 -c $(INCLUDE_FLAG)
 
 LD_FLAGS:=-m elf_i386 -T 
@@ -19,7 +19,7 @@ C_OBJECTS+=$(shell find ../ -name *.c)
 ASM_OBJECTS:=$(shell find . -name *.asm)
 
 COMPILATION_DIR:=./compilation
-VPATH:=main:idt:port_io:terminal:harddrive:mm:../libc
+VPATH:=main:idt:port_io:terminal:harddrive:mm:../libc:logging
 
 C_OBJECT_FILES:=$(patsubst %.c, $(COMPILATION_DIR)/%.o, $(notdir $(C_OBJECTS)) )
 ASM_OBJECT_FILES:=$(patsubst %.asm, $(COMPILATION_DIR)/%.o, $(notdir $(ASM_OBJECTS)))
@@ -59,4 +59,4 @@ clean:
 	rm $(KERNEL_PATH)
 
 run: 
-	qemu-system-i386 -s -S -kernel $(KERNEL_PATH) -m 256M
+	qemu-system-i386 -kernel $(KERNEL_PATH) 

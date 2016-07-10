@@ -1,7 +1,11 @@
+#include "logger.h"
 #include "stdio.h"
 #include "memory.h"
+#include "logger.h"
+#include "bitmap_manipulation.h"
 #include "physical_mm_manager.h"
 #include "external_linker_symbols.h"
+#include "common.h"
 
 #define PAGE_SIZE 4096 //4KB
 #define NO_AVAILABLE_PAGE -1
@@ -12,9 +16,11 @@
                                          (managed_memory_start_addr - \
                                          (PAGE_ALIGN(managed_memory_start_addr)))
 
-#define NULL (void*)0
-
-static char* bitmap = (char*)0;
+/*TODO: The memory mapping assumes there are no HOLES in ram.
+ * i.e., computes the next available physical page, according
+ * to an index and the base, consider holes in ram.
+ */
+static char* bitmap = NULL;
 unsigned long current_free_page_index = 0;
 static unsigned long bitmap_size = 0;
 static unsigned long managed_memory_start_addr = 0;
@@ -33,11 +39,11 @@ void map_memory(multiboot_memory_map_t* map_addr, unsigned int map_length)
         {
             if(!found_first_available)
             {
-                if(map_iterator->addr <= (unsigned long)&kernel_start &&
-                     (unsigned long)&kernel_start <= (map_iterator->addr + map_iterator->len))
+                if(map_iterator->addr <= KERNEL_START &&
+                     KERNEL_START <= (map_iterator->addr + map_iterator->len))
                 {
                     //bitmap will contain virtual address.
-                    bitmap = ((char*)&kernel_end + KERNEL_VIRTUAL_OFFSET);
+                    bitmap = (char*)(KERNEL_END + KERNEL_VIRTUAL_OFFSET);
                     free_memory_size += map_iterator->len - KERNEL_SIZE;
                     found_first_available = 1;
                 }
@@ -56,7 +62,13 @@ void map_memory(multiboot_memory_map_t* map_addr, unsigned int map_length)
     //Managed must be physical!!!
     managed_memory_start_addr = ((unsigned long)bitmap + bitmap_size) - KERNEL_VIRTUAL_OFFSET;
 
+    //Align managed memory address to page boundry
+    managed_memory_start_addr = NEXT_PAGE_BOUNDARY(managed_memory_start_addr);
+
     memset(PAGE_AVAILABLE, bitmap, bitmap_size);
+    log_print(LOG_DEBUG, "Physical Memory mapped successfuly!");
+    log_print(LOG_DEBUG, "bitmap virtual address: %x", bitmap);
+    log_print(LOG_DEBUG, "managed physical memory start address: %x", managed_memory_start_addr);
 }
 
 
@@ -65,34 +77,10 @@ void memory_manager_init(multiboot_memory_map_t* map_addr, unsigned int map_leng
     map_memory(map_addr, map_length);
 }
 
-/* Get the byte index form of the bit index.
- * i.e.:
- * bit_index == 7 -> byte_index == 0
- * bit_index == 15 -> byte_index == 1
- * bit_index == 21 -> byte_index == 2
- */
-static inline unsigned long bit_index_to_byte_index(unsigned long bit_index)
-{
-    return bit_index / (sizeof(char) * 8);
-}
 
 /* Set the current free page index to the next free page,
  * Since it was allocated.
  */
-static void set_next_free_page_index()
-{
-    unsigned long bitmap_index = bit_index_to_byte_index(current_free_page_index);
-    for(int i = bitmap_index; i < bitmap_size; i++)
-    {
-        if(bitmap[i] != 0x00)
-        {
-            current_free_page_index = (i * 8) + msb_index(bitmap[i]);
-            return;
-        }
-    }
-
-    current_free_page_index = NO_AVAILABLE_PAGE;
-}
 
 void* allocate_physical_page()
 {
@@ -108,15 +96,9 @@ void* allocate_physical_page()
 
     void* free_page_addr = (void*)(managed_memory_start_addr + (PAGE_SIZE * (current_free_page_index)));
 
-    set_next_free_page_index();
+    set_next_free_page_index(&current_free_page_index);
 
     return free_page_addr;
-}
-
-static inline unsigned long address_to_bit_index(void* addr)
-{
-    unsigned long aligned_addr = MANAGED_MEMORY_PAGE_ALIGN(addr);
-    return (aligned_addr - managed_memory_start_addr) / PAGE_SIZE;
 }
 
 void free_physical_page(void* page_addr)
@@ -126,7 +108,7 @@ void free_physical_page(void* page_addr)
         return;
     }
 
-    unsigned long bit_index = address_to_bit_index(page_addr);
+    unsigned long bit_index = address_to_bit_index(page_addr, managed_memory_start_addr);
 
     unsigned long bit_location = bit_index % (sizeof(char) * 8);
     unsigned long bitmap_index = bit_index_to_byte_index(bit_index);

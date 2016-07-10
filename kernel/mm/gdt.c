@@ -1,4 +1,5 @@
 #include "stdio.h"
+#include "logger.h"
 
 struct gdt_entry
 {
@@ -17,10 +18,12 @@ struct gdt_ptr
 } __attribute__((packed));
 
 /* Our GDT, with 3 entries, and finally our special GDT pointer */
-struct gdt_entry __attribute__((section(".init"))) gdt[3];
-struct gdt_ptr __attribute__((section(".init"))) gp;
+__attribute__((section(".tables"))) struct gdt_entry gdt[3];
 
-static void set_gdt_gate(int num, unsigned long base, unsigned long limit, unsigned char access, unsigned char gran)
+__attribute__((section(".tables"))) struct gdt_ptr gp;
+
+__attribute__((section(".init"))) static void set_gdt_gate(int num, unsigned long base, unsigned long limit,
+														   unsigned char access, unsigned char gran)
 {
 	gdt[num].base_low = (base & 0xFFFF);
 	gdt[num].base_middle = (base >> 16) & 0xFF;
@@ -35,7 +38,7 @@ static void set_gdt_gate(int num, unsigned long base, unsigned long limit, unsig
 	gdt[num].access = access;
 }
 
-void load_gdt()
+__attribute__((section(".init"))) void load_gdt()
 {
 	//Set up the pointer.
 	gp.limit = (sizeof(struct gdt_entry) * 3) - 1;
@@ -62,3 +65,10 @@ void load_gdt()
 	asm("foo_label:");
 }
 
+/* Remap GDT to its virtual form */
+void remap_gdt()
+{
+	log_print(LOG_DEBUG, "Remaping GDT");
+	asm("lgdt [gp + 0xC0000000]");
+	log_print(LOG_DEBUG, "Remapped GDT successfuly!");
+}

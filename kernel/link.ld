@@ -9,29 +9,24 @@ SECTIONS
     kernel_start = .;
 
     start_init = .;
-   .init ALIGN(4K) : AT(ADDR(.init) - KERNEL_VIRTUAL_OFFSET)
+   .init ALIGN(4K) :
                           { *(.multiboot);
                             *(.init);
                             *(.tables);
                           }
     end_init = .;
-    init_page_table_start = .;
-
-    . += ((end_init - start_init) / 4K) / 1K;
-
-    init_page_table_end = .;
 
     . += KERNEL_VIRTUAL_OFFSET;
 
     kernel_high_half_start = .;
-    /****** KERNEL *******/
    .text ALIGN(4K) :  AT(ADDR(.text) - KERNEL_VIRTUAL_OFFSET)
                          {*(.text) }
    .data ALIGN(4K) :  AT(ADDR(.data) - KERNEL_VIRTUAL_OFFSET)
                          { *(.data) }
+   .rodata ALIGN(4K) : AT(ADDR(.rodata) - KERNEL_VIRTUAL_OFFSET)
+                         { *(.rodata) }
    .bss  ALIGN(4K) :  AT(ADDR(.bss) - KERNEL_VIRTUAL_OFFSET)
                          { *(.bss)  }
-    /****** KERNEL *******/
     kernel_high_half_end = .;
 
     kernel_end = . - KERNEL_VIRTUAL_OFFSET;

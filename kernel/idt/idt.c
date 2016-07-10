@@ -1,4 +1,5 @@
 #include "port_io.h"
+#include "logger.h"
 #include "keyboard_driver.h"
 #include "idt.h"
 
@@ -23,8 +24,8 @@ struct idt_pointer
 	unsigned int base;
 } __attribute__((packed));
 
-struct idt_entry __attribute__((section(".init"))) idt_table[IDT_SIZE];
-struct idt_pointer __attribute__ ((section(".init"))) idt_ptr;
+struct idt_entry idt_table[IDT_SIZE];
+struct idt_pointer idt_ptr;
 
 void load_idt_entry(char isr_number, unsigned long base, short int selector, char flags)
 {
@@ -74,8 +75,14 @@ static void initialize_pic()
 
 void idt_init()
 {
+	log_print(LOG_DEBUG, "Initializing PIC");
 	initialize_pic();
+
 	initialize_idt_pointer();
+
+	log_print(LOG_DEBUG, "Loading IDT table");
 	asm("lidt [idt_ptr]");
 	asm("sti");
+
+	log_print(LOG_DEBUG, "IDT loaded successfuly!");
 }
