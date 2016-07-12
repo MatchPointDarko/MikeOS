@@ -154,6 +154,11 @@ void* allocate_kernel_virtual_page()
     phys_page = READ_WRITE(phys_page);
     phys_page = PRESENT(phys_page);
 
+    //Remove the OR'd value:
+    kernel_page_directory[free_page_addr_dir_entry] = (page_table_t*)
+                                                      ((unsigned long)kernel_page_directory[free_page_addr_dir_entry]
+                                                       & 0xFFFFFFF0);
+
     kernel_page_directory[free_page_addr_dir_entry][free_page_addr_table_index] = (unsigned long)phys_page;
     kernel_page_directory[free_page_addr_dir_entry] = SUPERVISOR(kernel_page_directory[free_page_addr_dir_entry]);
     kernel_page_directory[free_page_addr_dir_entry] = READ_WRITE(kernel_page_directory[free_page_addr_dir_entry]);
