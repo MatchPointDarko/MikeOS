@@ -1,7 +1,3 @@
-//
-// Created by sourcer on 10/07/16.
-//
-
 #ifndef MIKE_OS_BITMAP_MANIPULATION_H
 #define MIKE_OS_BITMAP_MANIPULATION_H
 

@@ -8,7 +8,12 @@
 
 int has_harddrive()
 {
-    //TODO..
+
+
+
+
+
+
 }
 
 static void pre_stages(int sector)

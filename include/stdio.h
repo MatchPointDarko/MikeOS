@@ -1,7 +1,3 @@
-//
-// Created by sourcer on 21/06/16.
-//
-
 #ifndef MIKE_OS_STDIO_H
 #define MIKE_OS_STDIO_H
 

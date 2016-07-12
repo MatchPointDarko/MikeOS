@@ -1,7 +1,3 @@
-//
-// Created by sourcer on 21/06/16.
-//
-
 #ifndef MIKE_OS_PHYSICAL_MM_MANAGER_H
 #define MIKE_OS_PHYSICAL_MM_MANAGER_H
 #include "multiboot_info.h"

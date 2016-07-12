@@ -1,6 +1,3 @@
-//
-// Created by sourcer on 10/07/16.
-//
 /* Get the byte index form of the bit index.
  * i.e.:
  * bit_index == 7 -> byte_index == 0

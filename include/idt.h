@@ -1,7 +1,3 @@
-//
-// Created by sourcer on 03/06/16.
-//
-
 #ifndef __IDT__
 #define __IDT__
 

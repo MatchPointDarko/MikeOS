@@ -1,7 +1,3 @@
-//
-// Created by sourcer on 07/07/16.
-//
-
 #ifndef MIKE_OS_KMALLOC_H
 #define MIKE_OS_KMALLOC_H
 

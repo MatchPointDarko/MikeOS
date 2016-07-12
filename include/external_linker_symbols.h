@@ -1,7 +1,3 @@
-//
-// Created by sourcer on 01/07/16.
-//
-
 #ifndef MIKE_OS_EXTERNAL_LINKER_SYMBOLS_H
 #define MIKE_OS_EXTERNAL_LINKER_SYMBOLS_H
 

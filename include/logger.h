@@ -1,7 +1,3 @@
-//
-// Created by sourcer on 04/07/16.
-//
-
 #ifndef MIKE_OS_LOGGER_H
 #define MIKE_OS_LOGGER_H
 

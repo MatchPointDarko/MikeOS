@@ -23,6 +23,7 @@ static void* increase_heap_size()
    block_header_t* insert = NULL;
    void* free_page = allocate_kernel_virtual_page();
 
+   printf("free page: %x\n", free_page);
    if(free_page == NULL)
    {
       return NULL;

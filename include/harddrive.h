@@ -1,7 +1,3 @@
-//
-// Created by sourcer on 17/06/16.
-//
-
 #ifndef MIKE_OS_HARDDRIVE_H
 #define MIKE_OS_HARDDRIVE_H
 
