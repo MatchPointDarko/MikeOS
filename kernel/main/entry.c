@@ -31,6 +31,9 @@ void kmain(struct multiboot_info* info)
     log_print(LOG_INFO, "Initializing keyboard driver");
     keyboard_init();
 
+    log_print(LOG_INFO, "Initializing hard-drive driver");
+    harddrive_init();
+
     while(1)
         asm("hlt");
 }

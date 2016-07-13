@@ -24,6 +24,8 @@ VPATH:=main:idt:port_io:terminal:harddrive:mm:../libc:logging
 C_OBJECT_FILES:=$(patsubst %.c, $(COMPILATION_DIR)/%.o, $(notdir $(C_OBJECTS)) )
 ASM_OBJECT_FILES:=$(patsubst %.asm, $(COMPILATION_DIR)/%.o, $(notdir $(ASM_OBJECTS)))
 
+HARD_DRIVE_PATH:= ../output/hard_drive.img
+
 .PHONY:
 	assemble
 	compile
@@ -33,7 +35,10 @@ ASM_OBJECT_FILES:=$(patsubst %.asm, $(COMPILATION_DIR)/%.o, $(notdir $(ASM_OBJEC
 	run
 
 # Main compilation rule
-all: link 
+all: link $(HARD_DRIVE_PATH)
+
+$(HARD_DRIVE_PATH):
+	dd if=/dev/zero of=$(HARD_DRIVE_PATH) bs=4096 count=1
 
 $(COMPILATION_DIR):
 	mkdir $(COMPILATION_DIR)
@@ -59,7 +64,7 @@ clean:
 	rm $(KERNEL_PATH)
 
 run:
-	qemu-system-i386 -kernel $(KERNEL_PATH)
+	qemu-system-i386 -kernel $(KERNEL_PATH) -hda $(HARD_DRIVE_PATH)
 
 run_debug: 
-	qemu-system-i386 -kernel $(KERNEL_PATH) -monitor telnet:127.0.0.1:1234,server,nowait -d cpu_reset
+	qemu-system-i386 -kernel $(KERNEL_PATH) -monitor telnet:127.0.0.1:1234,server,nowait -d cpu_reset -hda $(HARD_DRIVE_PATH)
