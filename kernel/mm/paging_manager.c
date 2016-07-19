@@ -131,6 +131,7 @@ void* allocate_kernel_virtual_page()
     if(current_free_page_index == NO_AVAILABLE_PAGE)
     {
         // :-(
+        //TODO:PANIC!!!
         return NULL;
     }
     unsigned char bit_index = current_free_page_index % (sizeof(char) * 8);
@@ -160,6 +161,8 @@ void* allocate_kernel_virtual_page()
                                                        & 0xFFFFFFF0);
 
     kernel_page_directory[free_page_addr_dir_entry][free_page_addr_table_index] = (unsigned long)phys_page;
+
+    //Set bits
     kernel_page_directory[free_page_addr_dir_entry] = SUPERVISOR(kernel_page_directory[free_page_addr_dir_entry]);
     kernel_page_directory[free_page_addr_dir_entry] = READ_WRITE(kernel_page_directory[free_page_addr_dir_entry]);
     kernel_page_directory[free_page_addr_dir_entry] = PRESENT(kernel_page_directory[free_page_addr_dir_entry]);
@@ -176,6 +179,9 @@ void free_kernel_virtual_page(void* virtual_address)
         return;
     }
 
+    //TODO:Free the physical page
+
+    //Free the virtual page.
     unsigned long bit_index = address_to_bit_index(virtual_address,
                                                    (void*)MANAGED_VMEM_START_ADDRESS);
 

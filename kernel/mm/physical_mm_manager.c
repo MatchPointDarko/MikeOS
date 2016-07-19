@@ -72,17 +72,16 @@ void memory_manager_init(multiboot_memory_map_t* map_addr, unsigned int map_leng
     map_memory(map_addr, map_length);
 }
 
-/* Set the current free page index to the next free page,
- * Since it was allocated.
- */
-
+/* Allocate a single page. */
 void* allocate_physical_page()
 {
     if(current_free_page_index == NO_AVAILABLE_PAGE)
     {
+
         return NULL;
     }
 
+    // Bit index in a byte
     unsigned char bit_index = current_free_page_index % (sizeof(char) * 8);
     unsigned long bitmap_index = bit_index_to_byte_index(current_free_page_index);
 
@@ -95,14 +94,15 @@ void* allocate_physical_page()
     return free_page_addr;
 }
 
-void free_physical_page(void* page_addr)
+void free_physical_pages(void* page_addr)
 {
     if((unsigned long)page_addr < managed_memory_start_addr)
     {
+        //TODO:panic..
         return;
     }
 
-    unsigned long bit_index = address_to_bit_index(page_addr, (void*)managed_memory_start_addr);
+    unsigned long bit_index = address_to_bit_index(page_addr, (void *) managed_memory_start_addr);
 
     unsigned long bit_location = bit_index % (sizeof(char) * 8);
     unsigned long bitmap_index = bit_index_to_byte_index(bit_index);
@@ -110,7 +110,7 @@ void free_physical_page(void* page_addr)
     turn_bit_on(&bitmap[bitmap_index], bit_location);
 
     //Check bit index is lower than the current free page
-    if(bit_index < current_free_page_index)
+    if (bit_index < current_free_page_index)
     {
         current_free_page_index = bit_index;
     }

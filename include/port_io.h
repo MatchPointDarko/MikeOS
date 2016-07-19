@@ -4,4 +4,7 @@
 void write_port(unsigned int, unsigned int);
 unsigned int read_port(unsigned int);
 
+void write_word_port(unsigned int, unsigned int);
+unsigned int read_word_port(unsigned int);
+
 #endif

@@ -12,11 +12,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="727c824f-6054-4f6d-b588-c7399d5ebaf3" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/include/harddrive.h" afterPath="$PROJECT_DIR$/include/harddrive.h" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/kernel/multitask/task.c" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/include/harddrive.h" afterPath="$PROJECT_DIR$/include/ata.h" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/kernel/harddrive/harddrive.c" afterPath="$PROJECT_DIR$/kernel/harddrive/ata.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/include/gdt.h" afterPath="$PROJECT_DIR$/include/gdt.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/include/port_io.h" afterPath="$PROJECT_DIR$/include/port_io.h" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kernel/Makefile" afterPath="$PROJECT_DIR$/kernel/Makefile" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kernel/harddrive/harddrive.c" afterPath="$PROJECT_DIR$/kernel/harddrive/harddrive.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kernel/idt/keyboard_driver.c" afterPath="$PROJECT_DIR$/kernel/idt/keyboard_driver.c" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kernel/main/entry.c" afterPath="$PROJECT_DIR$/kernel/main/entry.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kernel/mm/kmalloc.c" afterPath="$PROJECT_DIR$/kernel/mm/kmalloc.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kernel/mm/gdt.c" afterPath="$PROJECT_DIR$/kernel/mm/gdt.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kernel/mm/paging_manager.c" afterPath="$PROJECT_DIR$/kernel/mm/paging_manager.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kernel/mm/physical_mm_manager.c" afterPath="$PROJECT_DIR$/kernel/mm/physical_mm_manager.c" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kernel/port_io/port_io.asm" afterPath="$PROJECT_DIR$/kernel/port_io/port_io.asm" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kernel/terminal/terminal.c" afterPath="$PROJECT_DIR$/kernel/terminal/terminal.c" />
     </list>
     <ignored path="mike_os.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -37,11 +46,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="paging_manager.c" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/kernel/mm/paging_manager.c">
+      <file leaf-file-name="task.c" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/kernel/multitask/task.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="612">
-              <caret line="201" column="0" selection-start-line="201" selection-start-column="0" selection-end-line="201" selection-end-column="0" />
+            <state relative-caret-position="576">
+              <caret line="69" column="0" selection-start-line="69" selection-start-column="0" selection-end-line="69" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -50,36 +59,6 @@
       <file leaf-file-name="idt.c" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/kernel/idt/idt.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="234">
-              <caret line="13" column="8" selection-start-line="13" selection-start-column="8" selection-end-line="13" selection-end-column="8" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="keyboard_driver.c" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/kernel/idt/keyboard_driver.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="504">
-              <caret line="54" column="0" selection-start-line="54" selection-start-column="0" selection-end-line="54" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="harddrive.c" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/kernel/harddrive/harddrive.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="72">
-              <caret line="16" column="3" selection-start-line="16" selection-start-column="3" selection-end-line="16" selection-end-column="3" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="logger.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/include/logger.h">
-          <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="0">
               <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
@@ -87,21 +66,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="harddrive.h" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/include/harddrive.h">
+      <file leaf-file-name="paging_manager.c" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/kernel/mm/paging_manager.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
-              <caret line="11" column="4" selection-start-line="11" selection-start-column="4" selection-end-line="11" selection-end-column="4" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="entry.c" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/kernel/main/entry.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="587">
-              <caret line="34" column="20" selection-start-line="34" selection-start-column="20" selection-end-line="34" selection-end-column="20" />
+            <state relative-caret-position="594">
+              <caret line="171" column="3" selection-start-line="171" selection-start-column="3" selection-end-line="171" selection-end-column="3" />
               <folding />
             </state>
           </provider>
@@ -110,11 +79,41 @@
       <file leaf-file-name="kmalloc.c" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/kernel/mm/kmalloc.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="25" column="0" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+            <state relative-caret-position="0">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding>
                 <marker date="1468409236897" expanded="true" signature="225:297" placeholder="{...}" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="physical_mm_manager.c" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/kernel/mm/physical_mm_manager.c">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="65" column="4" selection-start-line="65" selection-start-column="4" selection-end-line="65" selection-end-column="4" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="physical_mm_manager.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/include/physical_mm_manager.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="126">
+              <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="keyboard_driver.c" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/kernel/idt/keyboard_driver.c">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -127,8 +126,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/idt/exceptions.c" />
-        <option value="$PROJECT_DIR$/include/exceptions.h" />
         <option value="$PROJECT_DIR$/include/multiboot_info.h" />
         <option value="$PROJECT_DIR$/src/harddrive/harddrive.c" />
         <option value="$PROJECT_DIR$/src/main/entry_asm.asm" />
@@ -138,7 +135,6 @@
         <option value="$PROJECT_DIR$/src/idt/keyboard_driver_asm.asm" />
         <option value="$PROJECT_DIR$/include/keyboard_driver.h" />
         <option value="$PROJECT_DIR$/src/port_io/port_io.asm" />
-        <option value="$PROJECT_DIR$/include/port_io.h" />
         <option value="$PROJECT_DIR$/src/idt/pit.c" />
         <option value="$PROJECT_DIR$/src/CMakeLists.txt" />
         <option value="$PROJECT_DIR$/src/main/entry.c" />
@@ -150,34 +146,37 @@
         <option value="$PROJECT_DIR$/include/mm_manager.h" />
         <option value="$PROJECT_DIR$/libc/memory.c" />
         <option value="$PROJECT_DIR$/kernel/link.ld" />
-        <option value="$PROJECT_DIR$/kernel/port_io/port_io.asm" />
         <option value="$PROJECT_DIR$/kernel/main/entry_asm.asm" />
         <option value="$PROJECT_DIR$/include/terminal.h" />
         <option value="$PROJECT_DIR$/libc/stdio.c" />
-        <option value="$PROJECT_DIR$/kernel/mm/gdt.c" />
         <option value="$PROJECT_DIR$/kernel/logging/logger.c" />
         <option value="$PROJECT_DIR$/kernel/idt/idt.c" />
-        <option value="$PROJECT_DIR$/kernel/idt/keyboard_driver.c" />
-        <option value="$PROJECT_DIR$/kernel/terminal/terminal.c" />
         <option value="$PROJECT_DIR$/kernel/mm/virtual_mm_manager.c" />
         <option value="$PROJECT_DIR$/include/common.h" />
-        <option value="$PROJECT_DIR$/kernel/mm/physical_mm_manager.c" />
-        <option value="$PROJECT_DIR$/kernel/mm/paging_manager.c" />
         <option value="$PROJECT_DIR$/kernel/mm/bitmap_manipulation.c" />
         <option value="$PROJECT_DIR$/include/physical_mm_manager.h" />
         <option value="$PROJECT_DIR$/include/paging_manager.h" />
         <option value="$PROJECT_DIR$/include/stdio.h" />
         <option value="$PROJECT_DIR$/include/memory.h" />
         <option value="$PROJECT_DIR$/include/kmalloc.h" />
-        <option value="$PROJECT_DIR$/include/gdt.h" />
         <option value="$PROJECT_DIR$/include/external_linker_symbols.h" />
         <option value="$PROJECT_DIR$/include/bitmap_manipulation.h" />
         <option value="$PROJECT_DIR$/include/idt.h" />
         <option value="$PROJECT_DIR$/include/logger.h" />
-        <option value="$PROJECT_DIR$/kernel/main/entry.c" />
         <option value="$PROJECT_DIR$/kernel/mm/kmalloc.c" />
-        <option value="$PROJECT_DIR$/kernel/harddrive/harddrive.c" />
         <option value="$PROJECT_DIR$/include/harddrive.h" />
+        <option value="$PROJECT_DIR$/include/port_io.h" />
+        <option value="$PROJECT_DIR$/kernel/harddrive/harddrive.c" />
+        <option value="$PROJECT_DIR$/kernel/port_io/port_io.asm" />
+        <option value="$PROJECT_DIR$/kernel/harddrive/ata.c" />
+        <option value="$PROJECT_DIR$/kernel/main/entry.c" />
+        <option value="$PROJECT_DIR$/kernel/terminal/terminal.c" />
+        <option value="$PROJECT_DIR$/kernel/mm/gdt.c" />
+        <option value="$PROJECT_DIR$/include/gdt.h" />
+        <option value="$PROJECT_DIR$/kernel/multitask/task.c" />
+        <option value="$PROJECT_DIR$/kernel/idt/keyboard_driver.c" />
+        <option value="$PROJECT_DIR$/kernel/mm/physical_mm_manager.c" />
+        <option value="$PROJECT_DIR$/kernel/mm/paging_manager.c" />
       </list>
     </option>
   </component>
@@ -263,25 +262,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="terminal" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mike_os" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mike_os" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="kernel" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="port_io" />
+              <option name="myItemId" value="multitask" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -317,43 +298,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mike_os" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mike_os" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="kernel" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="idt" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mike_os" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mike_os" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="kernel" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="harddrive" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -582,7 +527,7 @@
     <frame x="61" y="-4" width="1305" height="772" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23754789" sideWeight="0.47333333" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23831418" sideWeight="0.47333333" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32935917" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32935917" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -619,7 +564,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/idt.c" />
     <entry file="file://$PROJECT_DIR$/src/keyboard_driver.asm" />
     <entry file="file://$PROJECT_DIR$/src/keyboard_driver.c" />
     <entry file="file://$PROJECT_DIR$/src/entry.c" />
@@ -628,13 +572,6 @@
     <entry file="file://$PROJECT_DIR$/src/main/entry.asm" />
     <entry file="file://$PROJECT_DIR$/src/idt/idt.asm" />
     <entry file="file://$PROJECT_DIR$/src/idt/keyboard_driver.asm" />
-    <entry file="file://$PROJECT_DIR$/kernel/idt/keyboard_driver_asm.asm">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="54">
-          <caret line="3" column="18" selection-start-line="3" selection-start-column="18" selection-end-line="3" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/libc/string.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
@@ -705,23 +642,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/kernel/mm/gdt.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/kernel/mm/bitmap_manipulation.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/include/physical_mm_manager.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -733,14 +654,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/include/port_io.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -770,22 +683,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/include/kmalloc.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/include/gdt.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/include/external_linker_symbols.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -841,30 +738,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/kernel/mm/physical_mm_manager.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/kernel/terminal/terminal.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/kernel/port_io/port_io.asm">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="4" selection-start-line="0" selection-start-column="4" selection-end-line="0" selection-end-column="4" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/kernel/mm/virtual_mm_manager.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="36">
@@ -897,56 +770,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/kernel/main/entry.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="587">
-          <caret line="34" column="20" selection-start-line="34" selection-start-column="20" selection-end-line="34" selection-end-column="20" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/kernel/mm/kmalloc.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="25" column="0" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
-          <folding>
-            <marker date="1468409236897" expanded="true" signature="225:297" placeholder="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/kernel/mm/paging_manager.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="612">
-          <caret line="201" column="0" selection-start-line="201" selection-start-column="0" selection-end-line="201" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/kernel/idt/idt.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="234">
-          <caret line="13" column="8" selection-start-line="13" selection-start-column="8" selection-end-line="13" selection-end-column="8" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/kernel/idt/keyboard_driver.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="504">
-          <caret line="54" column="0" selection-start-line="54" selection-start-column="0" selection-end-line="54" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/kernel/harddrive/harddrive.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="16" column="3" selection-start-line="16" selection-start-column="3" selection-end-line="16" selection-end-column="3" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/include/logger.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -955,10 +778,140 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/include/harddrive.h">
+    <entry file="file://$PROJECT_DIR$/kernel/harddrive/ata.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="11" column="4" selection-start-line="11" selection-start-column="4" selection-end-line="11" selection-end-column="4" />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/kernel/port_io/port_io.asm">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="540">
+          <caret line="30" column="7" selection-start-line="30" selection-start-column="7" selection-end-line="30" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/ata.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="12" column="58" selection-start-line="12" selection-start-column="58" selection-end-line="12" selection-end-column="58" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/port_io.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="6" column="46" selection-start-line="6" selection-start-column="46" selection-end-line="6" selection-end-column="46" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/kernel/main/entry.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="612">
+          <caret line="38" column="0" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/kernel/terminal/terminal.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="558">
+          <caret line="125" column="0" selection-start-line="125" selection-start-column="0" selection-end-line="125" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/kernel/idt/keyboard_driver_asm.asm">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="7" column="6" selection-start-line="7" selection-start-column="6" selection-end-line="7" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/kernel/mm/gdt.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/external_linker_symbols.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/gdt.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="5" column="66" selection-start-line="5" selection-start-column="66" selection-end-line="5" selection-end-column="66" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/kernel/idt/keyboard_driver.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/kernel/mm/kmalloc.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <marker date="1468409236897" expanded="true" signature="225:297" placeholder="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/kernel/mm/physical_mm_manager.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="65" column="4" selection-start-line="65" selection-start-column="4" selection-end-line="65" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/physical_mm_manager.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/kernel/multitask/task.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="576">
+          <caret line="69" column="0" selection-start-line="69" selection-start-column="0" selection-end-line="69" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/kernel/idt/idt.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/kernel/mm/paging_manager.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="594">
+          <caret line="171" column="3" selection-start-line="171" selection-start-column="3" selection-end-line="171" selection-end-column="3" />
           <folding />
         </state>
       </provider>

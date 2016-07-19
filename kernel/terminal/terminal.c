@@ -10,6 +10,7 @@
 
 static int cursor_x = 0;
 static int cursor_y = 0;
+//TODO:Change to virtual address...
 static char *vga_ptr = (char*)0xb8000;
 static enum vga_color terminal_color = TERMINAL_DEFAULT_COLOR;
 
@@ -91,9 +92,11 @@ void putc(char c)
 	if((handler_index = is_escape_character(c)) != -1)
 	{
 		ESCAPE_CHARACTERS_HANDLERS[handler_index]();
-		return;
 	}
-	default_handler(c);
+	else
+	{
+		default_handler(c);
+	}
 }
 
 void flush_screen()

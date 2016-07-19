@@ -22,8 +22,9 @@ __attribute__((section(".tables"))) struct gdt_entry gdt[3];
 
 __attribute__((section(".tables"))) struct gdt_ptr gp;
 
-__attribute__((section(".init"))) static void set_gdt_gate(int num, unsigned long base, unsigned long limit,
-														   unsigned char access, unsigned char gran)
+__attribute__((section(".init")))
+void set_gdt_gate(int num, unsigned long base, unsigned long limit,
+						 unsigned char access, unsigned char gran)
 {
 	gdt[num].base_low = (base & 0xFFFF);
 	gdt[num].base_middle = (base >> 16) & 0xFF;
