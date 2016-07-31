@@ -2,7 +2,7 @@
 #include "idt.h"
 #include "kmalloc.h"
 #include "terminal.h"
-#include "ata.h"Conten
+#include "ata.h"
 #include "port_io.h"
 #include "stdio.h"
 #include "keyboard_driver.h"
@@ -32,7 +32,6 @@ void kmain(struct multiboot_info* info)
     keyboard_init();
 
     log_print(LOG_INFO, "Initializing hard-drive driver");
-    harddrive_init();
 
     while(1)
         asm("hlt");

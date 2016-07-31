@@ -10,7 +10,6 @@ section .multiboot
 global start
 extern kmain
 extern paging_init
-extern kernel_page_directory
 extern load_gdt
 
 section .init
