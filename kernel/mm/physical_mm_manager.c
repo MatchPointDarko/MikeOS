@@ -21,12 +21,6 @@ typedef struct physical_mem_region
 static unsigned int number_of_regions = 0;
 static physical_mem_region_t* physical_memory_regions = NULL;
 
-static char* bitmap = NULL;
-static unsigned long current_free_page_index = 0;
-static unsigned long bitmap_size = 0;
-static unsigned long managed_memory_start_addr = 0;
-static unsigned long free_memory_size = 0;
-
 /* Map the RAM, using the GRUB memory map. */
 void map_memory(multiboot_memory_map_t* map_addr, unsigned int map_length)
 {
