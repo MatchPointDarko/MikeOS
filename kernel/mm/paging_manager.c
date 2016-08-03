@@ -2,7 +2,7 @@
 #include "memory.h"
 #include "bitmap_manipulation.h"
 #include "physical_mm_manager.h"
-#include "external_linker_symbols.h"
+#include "common_constants.h"
 
 #define PAGE_SIZE 4096
 #define PAGE_DIR_SIZE 1024
