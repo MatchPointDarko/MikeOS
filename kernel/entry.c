@@ -9,6 +9,7 @@
 #include "multiboot_info.h"
 #include "physical_mm_manager.h"
 #include "paging_manager.h"
+#include "common.h"
 #include "logger.h"
 
 void kmain(struct multiboot_info* info)
@@ -33,6 +34,5 @@ void kmain(struct multiboot_info* info)
 
     log_print(LOG_INFO, "Initializing hard-drive driver");
 
-    while(1)
-        asm("hlt");
+    HLT();
 }

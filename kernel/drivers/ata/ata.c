@@ -1,7 +1,6 @@
 /* Hard-drive ATA driver, using LBA28, PIO, Dummy polling.
  * TODO: Add usage of DMA in future versions, Polling is good for now.
  */
-#if 0
 #include "logger.h"
 #include "common.h"
 #include "port_io.h"
@@ -173,4 +172,3 @@ bool_t write_sector(hdd_block_t* chunk, unsigned int sector)
 
     return true;
 }
-#endif

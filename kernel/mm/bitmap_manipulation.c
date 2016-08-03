@@ -1,9 +1,3 @@
-/* Get the byte index form of the bit index.
- * i.e.:
- * bit_index == 7 -> byte_index == 0
- * bit_index == 15 -> byte_index == 1
- * bit_index == 21 -> byte_index == 2
- */
 #include "memory.h"
 #include "bitmap_manipulation.h"
 

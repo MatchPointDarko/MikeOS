@@ -1,3 +1,4 @@
+;Keyboard IRQ
 section .text
 
 global keyboard_handler
