@@ -1,16 +1,12 @@
 #ifndef MIKE_OS_HARDDRIVE_H
 #define MIKE_OS_HARDDRIVE_H
+
 #include "common.h"
 
-#define SECTOR_SIZE 512
+typedef struct ata_device ata_device_t;
 
-typedef struct hdd_block
-{
-    char chunk[SECTOR_SIZE];
-} hdd_block_t;
-
-void harddrive_init();
-bool_t write_sector(hdd_block_t* chunk, unsigned int sector);
-bool_t read_sector(hdd_block_t* chunk, unsigned int sector);
+void ata_init();
+void ata_read(ata_device_t* device, uint_16 buffer[], uint_32 sector, uint_8 sector_count);
+void ata_write(ata_device_t* device, uint_16 buffer[], uint_32 sector, uint_8 sector_count);
 
 #endif //MIKE_OS_HARDDRIVE_H

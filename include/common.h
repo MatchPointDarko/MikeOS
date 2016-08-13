@@ -10,6 +10,10 @@
 
 typedef int size_t;
 
+typedef unsigned char uint_8;
+typedef unsigned short uint_16;
+typedef unsigned int uint_32;
+
 typedef enum bool {false, true} bool_t;
 
 #define HLT() while(true) {asm("hlt");}

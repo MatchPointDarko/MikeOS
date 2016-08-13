@@ -33,6 +33,7 @@ void kmain(struct multiboot_info* info)
     keyboard_init();
 
     log_print(LOG_INFO, "Initializing hard-drive driver");
+    ata_init();
 
     HLT();
 }
