@@ -12,14 +12,16 @@ LD_FLAGS:=-m elf_i386 -T
 LD_SCRIPT:=link.ld
 
 KERNEL_NAME:=kernel
-KERNEL_OUTPUT_DIR:=../output/
-KERNEL_PATH:=$(KERNEL_OUTPUT_DIR)$(KERNEL_NAME)
+KERNEL_OUTPUT_DIR:=../output
+KERNEL_PATH:=$(KERNEL_OUTPUT_DIR)/$(KERNEL_NAME)
+BOOTABLE_FLOPPY_NAME:=$(KERNEL_OUTPUT_DIR)/bootable.iso
+GRUB_PATH:=../grub
 
 C_OBJECTS+=$(shell find ../ -name '*.c')
 ASM_OBJECTS:=$(shell find . -name '*.asm')
 
 COMPILATION_DIR:=./compilation
-VPATH:=drivers/keyboard:drivers/ata:port_io::mm:../libc:logging:multitask
+VPATH:=drivers/keyboard: drivers/ata: port_io: mm:../libc: logging: multitask
 
 C_OBJECT_FILES:=$(patsubst %.c, $(COMPILATION_DIR)/%.o, $(notdir $(C_OBJECTS)) )
 ASM_OBJECT_FILES:=$(patsubst %.asm, $(COMPILATION_DIR)/%.o, $(notdir $(ASM_OBJECTS)))
@@ -32,6 +34,7 @@ HARD_DRIVE_PATH:= ../output/hard_drive.img
 	all
 	clean
 	run
+	bootable
 
 # Main compilation rule
 all: link $(HARD_DRIVE_PATH)
@@ -61,6 +64,10 @@ link: $(KERNEL_OUTPUT_DIR) $(COMPILATION_DIR) compile assemble
 
 clean: 
 	rm $(KERNEL_PATH)
+
+bootable: all
+	cp $(KERNEL_PATH) $(GRUB_PATH)/kernel.elf
+	grub-mkrescue -o $(BOOTABLE_FLOPPY_NAME) $(GRUB_PATH)
 
 run:
 	qemu-system-i386 -kernel $(KERNEL_PATH) -hda $(HARD_DRIVE_PATH)

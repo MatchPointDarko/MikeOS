@@ -10,7 +10,8 @@ SECTIONS
 
     start_init = .;
    .init ALIGN(4K) :
-                          { *(.multiboot);
+                          {
+                            *(.multiboot);
                             *(.init);
                             *(.tables);
                           }
