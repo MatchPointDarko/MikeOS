@@ -1,7 +1,7 @@
 #include "gdt.h"
 #include "idt.h"
 #include "kmalloc.h"
-#include "terminal.h"
+#include "vga.h"
 #include "ata.h"
 #include "port_io.h"
 #include "stdio.h"
@@ -12,11 +12,32 @@
 #include "common.h"
 #include "logger.h"
 
+/*
+ * Booted from harddisk, probably already installed.
+ */
+static void harddisk_boot()
+{
+
+
+}
+
+/*
+ * Booted from a floppy.
+ * Create a rootfs, using ramdisk.
+ */
+static void floppy_boot()
+{
+
+
+
+}
+
 void kmain(struct multiboot_info* info)
 {
-    flush_screen();
+    vga_flush();
     log_print(LOG_INFO, "Entered High half kernel");
 
+    printf("%x\n", info->boot_device);
     log_print(LOG_INFO, "Initializing memory manager");
     memory_manager_init((multiboot_memory_map_t *)info->mmap_addr, info->mmap_length);
 
@@ -32,7 +53,7 @@ void kmain(struct multiboot_info* info)
     log_print(LOG_INFO, "Initializing keyboard driver");
     keyboard_init();
 
-    log_print(LOG_INFO, "Initializing hard-drive driver");
+    log_print(LOG_INFO, "Initializing ATA driver");
     ata_init();
 
     HLT();

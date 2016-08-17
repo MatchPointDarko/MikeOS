@@ -1,28 +1,25 @@
 bits 32
 
-;grub bootloader header
-section .multiboot
-align 4
-    dd 0x1BADB002 ;magic
-    dd 0x00                  ;flags
-    dd - (0x1BADB002 + 0x00) ;checksum. m+f+c should be zero
-
-; Declarations
+;Declarations
 global start
 extern kmain
 extern paging_init
 extern load_gdt
 
-section .init
+section .multiboot
+align 4
+    dd 0x1BADB002 ;magic
+    dd 0x2 ;flags
+    dd - (0x1BADB002 + 0x02) ;checksum. m+f+c should be zero
 
+section .init
 start:
-    cli 			;block interrupts
+    cli ;block interrupts
     mov esp, init_stack
     call load_gdt
     call paging_init
 
     ;Now high half kernel is mapped to the page directory
-
     mov esp, stack_space	;set stack pointer
     push ebx ;grub boot info
     call kmain

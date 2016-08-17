@@ -1,4 +1,4 @@
-#include "terminal.h"
+#include "vga.h"
 #include "stdio.h"
 #include "logger.h"
 
@@ -24,5 +24,5 @@ void log_print(log_type_t log_type, char* format, ...)
     print(0, format, args);
     printf("\n");
 
-    set_terminal_color(TERMINAL_DEFAULT_COLOR);
+    set_terminal_color(VGA_DEFAULT_COLOR);
 }

@@ -1,5 +1,5 @@
 #include "stdio.h"
-#include "terminal.h"
+#include "vga.h"
 
 #define PAD_RIGHT 1
 #define PAD_ZERO 2
@@ -17,7 +17,7 @@ static void printchar(char **str, int c)
     {
         output[0] = c;
         output[1] = '\0';
-        terminal_print(output);
+        vga_print(output);
     }
 }
 

@@ -21,7 +21,7 @@ C_OBJECTS+=$(shell find ../ -name '*.c')
 ASM_OBJECTS:=$(shell find . -name '*.asm')
 
 COMPILATION_DIR:=./compilation
-VPATH:=drivers/keyboard: drivers/ata: port_io: mm:../libc: logging: multitask
+VPATH:=vfs: drivers/vga: drivers/keyboard: drivers/ata: port_io: mm:../libc: logging: multitask
 
 C_OBJECT_FILES:=$(patsubst %.c, $(COMPILATION_DIR)/%.o, $(notdir $(C_OBJECTS)) )
 ASM_OBJECT_FILES:=$(patsubst %.asm, $(COMPILATION_DIR)/%.o, $(notdir $(ASM_OBJECTS)))

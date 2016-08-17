@@ -19,11 +19,11 @@ typedef enum vga_color { COLOR_BLACK = 0,
 	COLOR_WHITE = 15,
 } color_t;
 
-#define TERMINAL_DEFAULT_COLOR COLOR_LIGHT_GREY
+#define VGA_DEFAULT_COLOR COLOR_LIGHT_GREY
 
-void flush_screen();
-void putc(char c);
-void terminal_print(char* str);
+void vga_flush();
+void vga_putc(const char c);
+void vga_print(const char* str);
 void set_terminal_color(color_t color);
 
 #endif

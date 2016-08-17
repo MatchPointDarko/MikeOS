@@ -130,10 +130,9 @@ void* allocate_kernel_virtual_page()
 {
     if(current_free_page_index == NO_AVAILABLE_PAGE)
     {
-        // :-(
-        //TODO:PANIC!!!
         return NULL;
     }
+
     unsigned char bit_index = current_free_page_index % (sizeof(char) * 8);
     unsigned long bitmap_index = bit_index_to_byte_index(current_free_page_index);
 
@@ -172,11 +171,11 @@ void* allocate_kernel_virtual_page()
     return free_page_addr;
 }
 
-void free_kernel_virtual_page(void* virtual_address)
+bool_t free_kernel_virtual_page(void* virtual_address)
 {
     if((unsigned long)virtual_address < MANAGED_VMEM_START_ADDRESS)
     {
-        return;
+        return false;
     }
 
     //TODO:Free the physical page
@@ -205,4 +204,6 @@ void free_kernel_virtual_page(void* virtual_address)
                                             (((unsigned long)kernel_page_directory[addr_dir_entry]) & 0xFFFFFFF0);
 
     tlb_flush();
+
+    return true;
 }
