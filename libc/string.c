@@ -1,3 +1,6 @@
+/*
+ * MikeOS: Helper functions for strings.
+ */
 char* strcpy(char* dest, const char* source)
 {
     while((*dest++ = *source++) != '\0');
@@ -28,3 +31,4 @@ int strcmp(const char* str1, const char* str2)
     return 0;
 }
 #endif
+

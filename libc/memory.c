@@ -1,3 +1,7 @@
+/*
+ * MikeOS: Memory helper fuctions.
+ */
+
 void memset(char value, char* addr, unsigned long length)
 {
     for(int i = 0; i < length; i++)

@@ -1,3 +1,7 @@
+/*
+ * MikeOS: IDT Initializing.
+ */
+
 #include "port_io.h"
 #include "logger.h"
 #include "keyboard_driver.h"

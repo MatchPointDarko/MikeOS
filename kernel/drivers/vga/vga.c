@@ -1,4 +1,5 @@
 /*
+ * MikeOS: VGA Driver.
  * TODO: VGA module needs refactoring ASAP, ugly, and really really stupid.
  */
 #include "vga.h"

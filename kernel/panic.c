@@ -1,3 +1,7 @@
+/*
+ * MikeOS: Kernel panic.
+ */
+
 #include "logger.h"
 #include "common.h"
 

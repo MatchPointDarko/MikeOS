@@ -1,5 +1,5 @@
-#ifndef __KPRINTF__
-#define __KPRINTF__
+#ifndef MIKE_OS_VGA_H
+#define MIKE_OS_VGA_H
 
 typedef enum vga_color { COLOR_BLACK = 0,
 	COLOR_BLUE = 1,

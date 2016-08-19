@@ -1,4 +1,5 @@
-/* Memory allocator, using K&R algorithm
+/*
+ * MikeOS: Kernel heap allocator, using K&R algorithm
  */
 #include "kmalloc.h"
 #include "common.h"

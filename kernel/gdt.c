@@ -1,3 +1,7 @@
+/*
+ * MikeOS: GDT Initializing.
+ */
+
 #include "stdio.h"
 #include "logger.h"
 

@@ -1,3 +1,8 @@
+/*
+ * MikeOS: Entry point, kmain.
+ *
+ */
+
 #include "gdt.h"
 #include "idt.h"
 #include "kmalloc.h"
@@ -19,14 +24,17 @@ static void harddisk_boot()
 {
 
 
+
+
 }
 
 /*
  * Booted from a floppy.
  * Create a rootfs, using ramdisk.
  */
-static void floppy_boot()
+static void floppy_boot(multiboot_module_t* initrd)
 {
+   //Initrd is FAT fs, load it to the root device
 
 
 
@@ -37,9 +45,10 @@ void kmain(struct multiboot_info* info)
     vga_flush();
     log_print(LOG_INFO, "Entered High half kernel");
 
-    printf("%x\n", info->boot_device);
+    printf("%x\n", &kernel_end);
+    //printf("%x\n", *(int*)info->mods_addr);
     log_print(LOG_INFO, "Initializing memory manager");
-    memory_manager_init((multiboot_memory_map_t *)info->mmap_addr, info->mmap_length);
+    phy_memory_manager_init((multiboot_memory_map_t *)info->mmap_addr, info->mmap_length);
 
     log_print(LOG_INFO, "Remaping the GDT, after virtual memory init");
     remap_gdt();

@@ -1,3 +1,7 @@
+/*
+ * MikeOS: A minimal implementation of printf.
+ */
+
 #include "stdio.h"
 #include "vga.h"
 

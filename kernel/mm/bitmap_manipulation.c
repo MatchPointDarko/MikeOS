@@ -1,3 +1,8 @@
+/*
+ * MikeOS: Helper functions for bit manipulations,
+ *         mainly helps the memory managers bitmaps.
+ */
+
 #include "memory.h"
 #include "bitmap_manipulation.h"
 

@@ -1,3 +1,8 @@
+/*
+ * MikeOS: Virtual memory and paging manager.
+ * TODO: Kernel virtual memory manager needs refactoring asap!
+ */
+
 #include "common.h"
 #include "memory.h"
 #include "bitmap_manipulation.h"

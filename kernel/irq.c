@@ -1,3 +1,7 @@
+/*
+ * MikeOS: IRQ default handler, and irq redirection.
+ */
+
 typedef struct regs
 {
     unsigned int gs, fs, es, ds;

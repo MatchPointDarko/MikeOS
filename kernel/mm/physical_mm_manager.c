@@ -1,3 +1,7 @@
+/*
+ * MikeOS: Physical memory manager.
+ */
+
 #include "logger.h"
 #include "panic.h"
 #include "stdio.h"
@@ -92,7 +96,7 @@ void map_memory(multiboot_memory_map_t* map_addr, unsigned int map_length)
 }
 
 
-void memory_manager_init(multiboot_memory_map_t* map_addr, unsigned int map_length)
+void phy_memory_manager_init(multiboot_memory_map_t* map_addr, unsigned int map_length)
 {
     map_memory(map_addr, map_length);
 }

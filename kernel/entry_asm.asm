@@ -1,3 +1,5 @@
+; MikeOS: Entry point initializaing high-half kernel and paging.
+
 bits 32
 
 ;Declarations

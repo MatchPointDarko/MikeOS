@@ -1,4 +1,5 @@
-/* ATA Driver. PIO, LBA28 is good for now.
+/*
+ * MikeOS: ATA Driver. PIO, LBA28 is good for now.
  * TODO: Add usage of DMA, LBA48, ATAPI, in the future.
  */
 #include "logger.h"
