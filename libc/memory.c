@@ -1,6 +1,18 @@
 /*
- * MikeOS: Memory helper fuctions.
+ * MikeOS: Memory helper functions.
  */
+
+#include "memory.h"
+
+void memcpy(void* dst, void* src, uint32_t num)
+{
+    char *dst_it = dst, *src_it = src;
+
+    for(int i = 0; i < num; i++)
+    {
+        dst_it[i] = src_it[i];
+    }
+}
 
 void memset(char value, char* addr, unsigned long length)
 {

@@ -1,6 +1,8 @@
-/* Define a task in terms of multi tasking.
+/*
+ * MikeOS: Task implementation. (similar to linux's task_struct)
  */
 #include "gdt.h"
+#include "common.h"
 
 #define USER_DATA_SEGMENT_ENTRY (0x3)
 #define USER_CODE_SEGMENT_ENTRY (0x4)
@@ -40,31 +42,40 @@ typedef struct tss_struct
     unsigned short iomap_base;
 } tss_struct_t;
 
+typedef struct task
+{
+    uint32_t pid;
+    void* stack_begin;
+    void* txt_begin;
+    void* data_begin;
+    tss_struct_t arch_task_info;
+} task_t;
+
 /* Load all user space entries to GDT.
  * NOTE: calls 'set_gdt_gate' which is relocated at 'init' section,
  * i.e. a physical address. TODO: maybe add an offset of virtual addr to
  * the function pointer, or rely on identity mapping.
  */
 
-static void load_task_state_segement()
+static void load_task_state_segment()
 {
-   //TSS
-   set_gdt_gate(TSS_SEGMENT_ENTRY, 0, 0xFFFFFFFF, 0x9A, 0xCF);
-   asm("mov eax, 0x5");
-   //asm("ltr eax");
+    //TSS
+    set_gdt_gate(TSS_SEGMENT_ENTRY, 0, 0xFFFFFFFF, 0x9A, 0xCF);
+    asm("mov eax, 0x5");
+    asm("ltr [eax]");
 }
+
 void load_user_space_entries()
 {
-   //Ring 3 code segment
-   set_gdt_gate(USER_CODE_SEGMENT_ENTRY, 0, 0xFFFFFFFF, 0xF2, 0xCF);
+    //Ring 3 code segment
+    set_gdt_gate(USER_CODE_SEGMENT_ENTRY, 0, 0xFFFFFFFF, 0xF2, 0xCF);
 
-   //Ring 3 data segment
-   set_gdt_gate(USER_DATA_SEGMENT_ENTRY, 0, 0xFFFFFFFF, 0xFA, 0xCF);
-
-   load_task_state_segement();
+    //Ring 3 data segment
+    set_gdt_gate(USER_DATA_SEGMENT_ENTRY, 0, 0xFFFFFFFF, 0xFA, 0xCF);
+    load_task_state_segment();
 }
 
 void goto_userspace(void* user_space_address)
 {
-   //TODO..
+    //TODO..
 }

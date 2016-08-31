@@ -10,9 +10,9 @@
 
 typedef int size_t;
 
-typedef unsigned char uint_8;
-typedef unsigned short uint_16;
-typedef unsigned int uint_32;
+typedef unsigned char uint8_t;
+typedef unsigned short uint16_t;
+typedef unsigned int uint32_t;
 
 typedef enum bool {false, true} bool_t;
 

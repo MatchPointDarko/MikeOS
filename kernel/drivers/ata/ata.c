@@ -1,12 +1,14 @@
 /*
  * MikeOS: ATA Driver. PIO, LBA28 is good for now.
- * TODO: Add usage of DMA, LBA48, ATAPI, in the future.
+ * TODO: Add usage of DMA, LBA48, ATAPI, in the future, REDESIGN.
  */
 #include "logger.h"
 #include "common.h"
 #include "port_io.h"
 #include "panic.h"
+#include "string.h"
 #include "ata.h"
+#include "memory.h"
 
 #define ATA_DATA_PORT (0x0)
 #define ATA_FEATURES_PORT (0x1)
@@ -84,7 +86,6 @@ typedef enum device_type
     SATA
 } device_type_t;
 
-
 #define MAGIC_NUMBER(sector) ((0xE0) | (sector << 4) | ((sector >> 24) & 0x0F))
 #define HAS_HARDDRIVE(result) (result & 0x40)
 #define HD_INPUT_PORT (0x1F6)
@@ -108,9 +109,8 @@ typedef struct ata_device
 } ata_device_t;
 
 //Total ATA Devices.
-ata_device_t ata_devices[MAX_ATA_DRIVES];
-
-//block_device_t ...
+static ata_device_t ata_devices[MAX_ATA_DRIVES];
+static block_device_t devices[MAX_ATA_DRIVES] = {0};
 
 //Sleep for 400ms.
 static void ata_sleep(ata_device_t* device)
@@ -187,7 +187,7 @@ static device_status_t ata_poll(ata_device_t* device)
 }
 
 static bool_t extract_identify_buffer(ata_device_t* device,
-                             uint_16 identify_buffer[IDENTIFY_BUFFER_SIZE])
+                             uint16_t identify_buffer[IDENTIFY_BUFFER_SIZE])
 {
     if(identify_buffer[0] == 0)
     {
@@ -198,7 +198,7 @@ static bool_t extract_identify_buffer(ata_device_t* device,
 
     device->signature = identify_buffer[0];
     device->features = identify_buffer[0x31];
-    device->command_supported = identify_buffer[0x52] | (uint_32)identify_buffer[0x53] << 16;
+    device->command_supported = identify_buffer[0x52] | (uint32_t)identify_buffer[0x53] << 16;
     //Get LBA
     if(device->command_supported & (1 << 26))
     {
@@ -228,7 +228,7 @@ static bool_t extract_identify_buffer(ata_device_t* device,
 void ata_init()
 {
     device_status_t status = DEVICE_READY;
-    uint_16 identify_buffer[IDENTIFY_BUFFER_SIZE] = {0,};
+    uint16_t identify_buffer[IDENTIFY_BUFFER_SIZE] = {0,};
 
     ata_devices[FIRST_ENTRY].base = 0x1F0;
     ata_devices[SECOND_ENTRY].base = 0x170;
@@ -279,9 +279,9 @@ void ata_init()
         }
 
         //Read identifiy buffer response.
-        for(int i = 0; i < IDENTIFY_BUFFER_SIZE; i++)
+        for(int j = 0; j < IDENTIFY_BUFFER_SIZE; j++)
         {
-            identify_buffer[i] = read_word_port(device->base + ATA_DATA_PORT);
+            identify_buffer[j] = read_word_port(device->base + ATA_DATA_PORT);
         }
 
         if(!extract_identify_buffer(device, identify_buffer))
@@ -289,17 +289,38 @@ void ata_init()
             continue;
         }
 
-        log_print(LOG_INFO, "Found a drive with type: %s, %s",
-                  device->device_type == ATA ? "ATA" :
-                  device->device_type == ATAPI ? "ATAPI" : "SATA",
+        char* name = device->device_type == ATA ? "ATA" :
+                     device->device_type == ATAPI ? "ATAPI" : "SATA";
+
+        log_print(LOG_INFO, "Found a drive with type: %s, %s", name,
                   device->is_slave ? "slave" : "master");
+
+        strcpy(devices[i].name, name);
+        devices[i].write = ata_write;
+        devices[i].read = ata_read;
+        devices[i].device_specific = (uint32_t)&ata_devices[i];
+        devices[i].device_size = ata_devices[i].drive_size;
+
+        log_print(LOG_INFO, "Registering the device....");
+        //register_device(&devices[i]);
     }
 }
 
-static void ata_pio28_pre_stages(ata_device_t* device, uint_32 sector, uint_8 sector_count)
+static void ata_block_if_busy(ata_device_t* device)
 {
-    write_port(device->base + ATA_DRIVE_PORT,
-               device->is_slave? 0xF0 : 0xE0);
+    while(read_port(device->base + ATA_STATUS_PORT) & DEVICE_BUSY);
+}
+
+static void ata_wait_for_status(ata_device_t* device, device_status_t status)
+{
+    while((read_port(device->base + ATA_STATUS_PORT) & status) == 0);
+}
+
+static void ata_pio28_pre_stages(ata_device_t* device, uint32_t sector, uint8_t sector_count)
+{
+    uint8_t dev_type = device->is_slave? 0xF0 : 0xE0;
+
+    write_port(device->base + ATA_DRIVE_PORT, dev_type | (sector >> 24) & 0x0F);
 
     write_port(device->base + ATA_SECTOR_COUNT_PORT,
                sector_count);
@@ -312,12 +333,21 @@ static void ata_pio28_pre_stages(ata_device_t* device, uint_32 sector, uint_8 se
                (unsigned char)(sector >> 16));
 }
 
-static void ata_pio28_read(ata_device_t* device, uint_16 buffer[], uint_32 sector, uint_8 sector_count)
+static void ata_pio28_read(ata_device_t* device, uint16_t buffer[], uint32_t sector, uint8_t sector_count)
 {
+    if(device == NULL || !device->exists || buffer == NULL || sector < 0 || sector_count < 0)
+    {
+        kernel_panic();
+    }
+
     ata_pio28_pre_stages(device, sector, sector_count);
 
     write_port(device->base + ATA_COMMAND_PORT,
                ATA_CMD_READ_PIO);
+
+    //Wait until data can be read
+    ata_wait_for_status(device, DEVICE_READY);
+    ata_wait_for_status(device, DEVICE_DATA_READY);
 
     for(int i = 0; i < sector_count; i++)
     {
@@ -325,16 +355,26 @@ static void ata_pio28_read(ata_device_t* device, uint_16 buffer[], uint_32 secto
         {
             buffer[j + (DEFAULT_SECTOR_SIZE / 2) * i] = read_word_port(device->base + ATA_DATA_PORT);
         }
+
         ata_sleep(device);
     }
 }
 
-static void ata_pio28_write(ata_device_t* device, uint_16 buffer[], uint_32 sector, uint_8 sector_count)
+static void ata_pio28_write(ata_device_t* device, uint16_t buffer[], uint32_t sector, uint8_t sector_count)
 {
+    if(device == NULL || !device->exists || buffer == NULL || sector < 0 || sector_count < 0)
+    {
+        kernel_panic();
+    }
+
     ata_pio28_pre_stages(device, sector, sector_count);
 
     write_port(device->base + ATA_COMMAND_PORT,
                ATA_CMD_WRITE_PIO);
+
+    //Wait until data can be written
+    ata_wait_for_status(device, DEVICE_READY);
+    ata_wait_for_status(device, DEVICE_DATA_READY);
 
     for(int i = 0; i < sector_count; i++)
     {
@@ -348,24 +388,22 @@ static void ata_pio28_write(ata_device_t* device, uint_16 buffer[], uint_32 sect
     }
 }
 
-void ata_read(ata_device_t* device, uint_16 buffer[], uint_32 sector, uint_8 sector_count)
+void ata_read(block_device_t* dev, void* buf, uint32_t begin_sector, uint32_t num_sectors)
 {
-    if(device == NULL || !device->exists || buffer == NULL || sector < 0 || sector_count < 0)
-    {
-        //TODO: Think if we actually need a panic here..
-        kernel_panic();
-    }
+    ata_device_t* ata_device = (ata_device_t*)dev->device_specific;
 
-    ata_pio28_read(device, buffer, sector, sector_count);
+    //Block until device isn't busy
+    ata_block_if_busy(ata_device);
+
+    ata_pio28_read(ata_device, buf, begin_sector, num_sectors);
 }
 
-void ata_write(ata_device_t* device, uint_16 buffer[], uint_32 sector, uint_8 sector_count)
+void ata_write(block_device_t* dev, void* buf, uint32_t begin_sector, uint32_t num_sectors)
 {
-    if(device == NULL || !device->exists || buffer == NULL || sector < 0 || sector_count < 0)
-    {
-        //TODO: Think if we actually need a panic here..
-        kernel_panic();
-    }
+    ata_device_t* ata_device = (ata_device_t*)dev->device_specific;
 
-    ata_pio28_write(device, buffer, sector, sector_count);
+    //Block until device isn't busy
+    ata_block_if_busy(ata_device);
+
+    ata_pio28_write((ata_device_t*)dev->device_specific, buf, begin_sector, num_sectors);
 }

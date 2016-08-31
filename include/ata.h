@@ -2,6 +2,7 @@
 #define MIKE_OS_HARDDRIVE_H
 
 #include "common.h"
+#include "device.h"
 
 typedef struct ata_device ata_device_t;
 
@@ -11,26 +12,26 @@ typedef struct ata_device ata_device_t;
  * */
 void ata_init();
 
-/* Function: ata_read
+/* Function: read
  * ------------------
- * Read sectors from an ATA device.
+ * Read a buffer from an ATA Drive.
  *
- * device: the ata device to read from.
- * buffer: the buffer to read to.
- * sector: the starting sector.
- * sectors_count: the number of sectors to read.
+ * dev: the device to read from.
+ * buf: the buffer to write to.
+ * offset: the offset to read from.
+ * size: size to read.
  */
-void ata_read(ata_device_t* device, uint_16 buffer[], uint_32 sector, uint_8 sector_count);
+void ata_read(block_device_t* dev, void* buf, uint32_t offset, uint32_t size);
 
-/* Function: ata_write
+/* Function: write
  * ------------------
- * Write sectors to an ATA device.
+ * write a buffer to an ATA Drive.
  *
- * device: the ata device to write to.
- * buffer: the buffer to read from.
- * sector: the starting sector.
- * sectors_count: number of sectors to write.
+ * dev: the device to write to.
+ * buf: the buffer to read from.
+ * offset: the offset to write from.
+ * size: size to write.
  */
-void ata_write(ata_device_t* device, uint_16 buffer[], uint_32 sector, uint_8 sector_count);
+void ata_write(block_device_t* dev, void* buf, uint32_t offset, uint32_t size);
 
 #endif //MIKE_OS_HARDDRIVE_H

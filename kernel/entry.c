@@ -45,8 +45,6 @@ void kmain(struct multiboot_info* info)
     vga_flush();
     log_print(LOG_INFO, "Entered High half kernel");
 
-    printf("%x\n", &kernel_end);
-    //printf("%x\n", *(int*)info->mods_addr);
     log_print(LOG_INFO, "Initializing memory manager");
     phy_memory_manager_init((multiboot_memory_map_t *)info->mmap_addr, info->mmap_length);
 
@@ -64,6 +62,5 @@ void kmain(struct multiboot_info* info)
 
     log_print(LOG_INFO, "Initializing ATA driver");
     ata_init();
-
     HLT();
 }
