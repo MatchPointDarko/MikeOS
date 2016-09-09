@@ -3,59 +3,21 @@
 #include "kmalloc.h"
 #include "memory.h"
 #include "string.h"
-#include "fs.h"
+#include "vfs.h"
+#include "list.h"
+#include "logger.h"
 
-#define IS_DIRECTORY(flags) (flags & 0x7)
-#define MAX_FILE_NAME_LENGTH (128)
-#define PATH_SEPERATOR ('/')
-
-typedef enum vfs_error
+typedef struct mount_point
 {
-    NO_SUCH_DIRECTORY,
-    NO_SUCH_FILE,
-    INVALID_ARGUMENT
+    char mount_path[MAX_PATH_LENGTH];
+    file_system_t* mounted_fs;
+    list_t children;
 
-} vfs_error_t;
+} mount_point_t;
 
-enum fs_node_types
-{
-    FS_FILE = 0x01,
-    FS_DIRECTORY,
-    FS_CHARDEVICE,
-    FS_BLOCKDEVICE,
-    FS_PIPE,
-    FS_SYMLINK,
-    FS_MOUNTPOINT = 0x08
-};
-
-typedef enum file_modes
-{ READ = 1, WRITE = 2, EXECUTE = 4} file_modes_t;
-
-typedef struct fs_node
-{
-    char name[MAX_FILE_NAME_LENGTH];     // The filename.
-    uint32_t permissions;        // The permissions mask.
-
-    uint32_t uid;         // The owning user.
-    uint32_t gid;         // The owning group.
-    uint32_t flags;       // Includes the node type. See #defines above.
-    uint32_t inode;       // This is device-specific - provides a way for a filesystem to identify files.
-    uint32_t length;      // Size of the file, in bytes.
-    uint32_t impl_defined;        // An implementation-defined number.
-
-    void(*read) (struct fs_node* node, uint32_t offset, uint32_t length, void* buffer);
-    void(*write) (struct fs_node* node, uint32_t offset, uint32_t length, void* buffer);
-    void(*open) (struct fs_node* node, file_modes_t permissions);
-    void(*close) (struct fs_node* node);
-    struct fs_node* (*readdir) (struct fs_node*);
-    struct fs_node* (*finddir) (struct fs_node*, const char* path);
-
-    file_system_t* fs;  //fs containing the node.
-    struct fs_node *ptr; // Used by mountpoints and symlinks.
-} fs_node_t;
-
-
-fs_node_t* root_node = NULL;
+static mount_point_t* mount_points = NULL;
+static mount_point_t* root_mount_point = NULL;
+block_device_t* root_device = NULL;
 
 /*
  * Initialize virtual filesystem.
@@ -63,24 +25,32 @@ fs_node_t* root_node = NULL;
  */
 void vfs_init()
 {
-    if(!(root_node = kmalloc(sizeof(fs_node_t))))
+    if(!(mount_points = kmalloc(sizeof(mount_point_t))))
     {
         //This should never happen.
         kernel_panic();
     }
 
-    memcpy(root_node->name, "/", sizeof("/"));
+    memcpy(mount_points->mount_path, "/", sizeof("/"));
 
-    root_node->gid = root_node->gid = 0;
+    mount_points->mounted_fs = NULL;
+
+    if(!initialize_list(&mount_points->children))
+    {
+        kernel_panic();
+    }
+
+    root_mount_point = mount_points;
+
+    log_print(LOG_DEBUG, "Successfully initialized the virtual file system");
 }
 
-#if 0
 /*
  * Mount a file system in the given path.
  */
-vfs_error_t vfs_mount(const char* path, file_system_t* fs)
+vfs_status_t vfs_mount(const char* path, file_system_t* fs)
 {
-    if(path == NULL || fs == NULL || !is_valid_path(path))
+    if(path == NULL || fs == NULL)
     {
         //Stop bullshiting me!
         return INVALID_ARGUMENT;
@@ -92,21 +62,27 @@ vfs_error_t vfs_mount(const char* path, file_system_t* fs)
     if(strcmp(path, "/") == 0)
     {
         //Trying to mount the root node, he has balls.
-        if(fs->write && fs->read && fs->open && fs->close && fs->finddir)
+        if(fs->read && fs->open && fs->close)
         {
-            root_fs->write = fs->write;
-            root_fs->read = fs->read;
-            root_fs->finddir = fs->finddir;
-            root_fs->open = fs->open;
-            root_fs->close = fs->close;
+            root_mount_point->mounted_fs = fs;
+            return SUCCESS;
         }
         else
         {
             //Stop bullshiting me!
-            return false;
+            return FAILURE;
+        }
+    }
+    else
+    {
+        //If we don't have a root fs yet, this is pointless.
+        if(root_mount_point->mounted_fs == NULL)
+        {
+            return NO_SUCH_DIRECTORY;
         }
     }
 
+    /*
     uint32_t depth = count_chars(path, PATH_SEPERATOR);
     const char* mount_name = NULL;
     fs_node_t* node = root_node;
@@ -114,11 +90,127 @@ vfs_error_t vfs_mount(const char* path, file_system_t* fs)
     const char* path_token = strtok(path, PATH_SEPERATOR);
     do
     {
-        node = node->finddir(node, path_token);
+        node = node->fs->finddir(node, path_token);
     }
     while(depth - 1 != 0 && (path_token = strtok(NULL, PATH_SEPERATOR) != NULL));
 
     //Now we got the node of the directory.
     mount_name = path_token;
+    */
 }
-#endif
+
+static uint32_t path_depth(const char* path)
+{
+    if(path == NULL)
+    {
+        return -1;
+    }
+
+    //Assumes the path is valid!
+
+    uint32_t counter = 0;
+
+    while(*path != '\0')
+    {
+        if(*path == '/')
+        {
+            counter++;
+        }
+
+        path++;
+    }
+
+    return counter;
+}
+
+mount_point_t* alloc_mount_point(char* path, file_system_t* fs)
+{
+    mount_point_t* mount_point = kmalloc(sizeof(mount_point_t));
+
+    if(mount_point == NULL)
+    {
+        return NULL;
+    }
+
+    memcpy(mount_point->mount_path, path, strlen(path) + 1);
+    mount_point->mounted_fs = fs;
+
+    return mount_point;
+}
+
+fs_node_t* vfs_open(const char* path)
+{
+    //Find the filesystem.
+    char *mount_point = NULL;
+    char *token = NULL;
+
+    //Walk on the mounts tree.
+    list_t tree_nodes;
+    mount_point_t* current = NULL;
+
+    if(!initialize_list(&tree_nodes))
+    {
+        goto clean_up;
+    }
+
+    if(!add_element(&tree_nodes, mount_points))
+    {
+        goto clean_up;
+    }
+
+    do
+    {
+        const char* specific_path = NULL;
+        if((current = pop_element(&tree_nodes, 0)) != NULL)
+        {
+            mount_point_t* child = NULL;
+            //Add its children
+            while(child = iter_list(&mount_points->children))
+            {
+                //Do we have a winner?
+                if((specific_path = strstr(path, child->mount_path)) != NULL)
+                {
+                    specific_path = specific_path + strlen(child->mount_path);
+                    if(!add_element(&tree_nodes, mount_points))
+                    {
+                        goto clean_up;
+                    }
+
+                }
+            }
+
+        }
+
+    }
+    while (!is_empty(&tree_nodes));
+
+clean_up:
+    free_list(&tree_nodes);
+    if(current != NULL)
+    {
+        return current->mounted_fs->open(current->mounted_fs, (char *) path);
+    }
+    else
+        return NULL;
+}
+
+void vfs_unmount(file_system_t* fs)
+{}
+
+uint32_t vfs_read(fs_node_t* node, uint32_t offset, uint32_t length, void* buffer)
+{
+    if(node == NULL)
+    {
+        return 0;
+    }
+
+    return node->fs->read(node, offset, length, buffer);
+}
+
+uint32_t vfs_write(fs_node_t* node, uint32_t offset, uint32_t length, void* buffer)
+{}
+
+void vfs_close(fs_node_t* node)
+{
+    node->fs->close(node);
+}

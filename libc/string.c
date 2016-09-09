@@ -24,6 +24,9 @@ int strcmp(const char* str1, const char* str2)
         {
             return *str1 - *str2;
         }
+
+        str1++;
+        str2++;
     }
 
     if(*str2 != '\0') return -1;
@@ -41,6 +44,7 @@ static bool_t char_in_string(const char character, const char* str)
         {
             return true;
         }
+        str++;
     }
 
     return false;
@@ -140,4 +144,48 @@ uint32_t count_chars(const char* str, int character)
     }
 
     return count;
+}
+
+char* strstr(const char* haystack, const char* needle)
+{
+    if(haystack == NULL || needle == NULL)
+    {
+        return NULL;
+    }
+
+    //O(n) :-)
+    //n = strlen(hay_stack)
+
+    const char* needle_iter = needle;
+    const char* substr = NULL;
+
+    while(*haystack != '\0' && *needle != '\0')
+    {
+        if(*needle_iter == *haystack)
+        {
+            if(substr == NULL)
+            {
+                substr = haystack;
+            }
+            needle_iter++;
+        }
+        else
+        {
+            substr = NULL;
+            needle_iter = needle;
+        }
+    }
+
+    return (char *)substr;
+}
+
+uint32_t strlen(char* str)
+{
+    uint32_t counter = 0;
+    while(*str++ != '\0')
+    {
+        counter++;
+    }
+
+    return counter;
 }

@@ -9,6 +9,7 @@
 #include "string.h"
 #include "ata.h"
 #include "memory.h"
+#include "vfs.h"
 
 #define ATA_DATA_PORT (0x0)
 #define ATA_FEATURES_PORT (0x1)
@@ -199,34 +200,31 @@ static bool_t extract_identify_buffer(ata_device_t* device,
     device->signature = identify_buffer[0];
     device->features = identify_buffer[0x31];
     device->command_supported = identify_buffer[0x52] | (uint32_t)identify_buffer[0x53] << 16;
-    //Get LBA
+#if 0
     if(device->command_supported & (1 << 26))
     {
         //TODO: This shit doesn't even make sense, fix it later.
-#if 0
         //LBA48
         device->is_lba48 = true;
         device->drive_size = identify_buffer[0x64];
         device->drive_size |= identify_buffer[0x64] << 16;
         device->drive_size = identify_buffer[0x64] << 32;
         device->drive_size = identify_buffer[0x64] << 48;
+    }
 #endif
-    }
-    else
-    {
-        //LBA24
-        device->is_lba48 = false;
-        device->drive_size = identify_buffer[0x3c];
-        device->drive_size = identify_buffer[0x3d] << 16;
-    }
+    device->is_lba48 = false;
+    device->drive_size = 0;
+    device->drive_size |= identify_buffer[0x3d];
+    device->drive_size <<= 16;
+    device->drive_size |= identify_buffer[0x3c];
+    device->drive_size *= device->sector_size;
 
     //TODO:Get Model string
 
     return true;
 }
 
-void ata_init()
-{
+void ata_init() {
     device_status_t status = DEVICE_READY;
     uint16_t identify_buffer[IDENTIFY_BUFFER_SIZE] = {0,};
 
@@ -241,15 +239,13 @@ void ata_init()
 
     //TODO:IRQ
 
-    for(int i = 0; i < MAX_ATA_DRIVES; i++)
-    {
-        ata_device_t* device = &ata_devices[i];
+    for (int i = 0; i < MAX_ATA_DRIVES; i++) {
+        ata_device_t *device = &ata_devices[i];
         device->is_slave = i % 2;
 
         ata_select_device(device);
 
-        if(!ata_identify(false, device))
-        {
+        if (!ata_identify(false, device)) {
             continue;
         }
 
@@ -259,37 +255,33 @@ void ata_init()
         unsigned char type1 = read_port(device->base + ATA_LBA_MID_PORT);
         unsigned char type2 = read_port(device->base + ATA_LBA_HIGH_PORT);
 
-        if(type1 == 0x14 && type2 == 0x15)
-        {
+        if (type1 == 0x14 && type2 == 0x15) {
             //Use atapi identifiy.
             ata_identify(true, device);
             device->device_type = ATAPI;
             //TODO:device->sector_size = 0;
         }
-        else if(type1 == 0x3c && type2 == 0xc3)
-        {
+        else if (type1 == 0x3c && type2 == 0xc3) {
             //SATA
             device->device_type = SATA;
         }
-        else
-        {
+        else {
             device->device_type = ATA;
             //Probably a normal ATA device, no packets.
             device->sector_size = DEFAULT_SECTOR_SIZE;
+
         }
 
         //Read identifiy buffer response.
-        for(int j = 0; j < IDENTIFY_BUFFER_SIZE; j++)
-        {
+        for (int j = 0; j < IDENTIFY_BUFFER_SIZE; j++) {
             identify_buffer[j] = read_word_port(device->base + ATA_DATA_PORT);
         }
 
-        if(!extract_identify_buffer(device, identify_buffer))
-        {
+        if (!extract_identify_buffer(device, identify_buffer)) {
             continue;
         }
 
-        char* name = device->device_type == ATA ? "ATA" :
+        char *name = device->device_type == ATA ? "ATA" :
                      device->device_type == ATAPI ? "ATAPI" : "SATA";
 
         log_print(LOG_INFO, "Found a drive with type: %s, %s", name,
@@ -298,11 +290,14 @@ void ata_init()
         strcpy(devices[i].name, name);
         devices[i].write = ata_write;
         devices[i].read = ata_read;
-        devices[i].device_specific = (uint32_t)&ata_devices[i];
-        devices[i].device_size = ata_devices[i].drive_size;
-
-        log_print(LOG_INFO, "Registering the device....");
-        //register_device(&devices[i]);
+        devices[i].device_specific = (uint32_t) device;
+        devices[i].device_size = device->drive_size;
+        devices[i].sector_size = device->sector_size;
+        if (root_device == NULL) {
+            //TODO: Make a smarter choice, maybe kernel arg.
+            log_print(LOG_INFO, "Choosing root device: %d", i);
+            root_device = &devices[i];
+        }
     }
 }
 

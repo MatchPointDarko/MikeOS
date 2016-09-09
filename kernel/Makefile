@@ -21,7 +21,7 @@ C_OBJECTS+=$(shell find ../ -name '*.c')
 ASM_OBJECTS:=$(shell find . -name '*.asm')
 
 COMPILATION_DIR:=./compilation
-VPATH:=dev: fs: drivers/vga: drivers/keyboard: drivers/ata: port_io: mm:../libc: logging: multitask
+VPATH:=data_structures: dev: fs: drivers/vga: drivers/keyboard: drivers/ata: port_io: mm:../libc: logging: multitask
 
 C_OBJECT_FILES:=$(patsubst %.c, $(COMPILATION_DIR)/%.o, $(notdir $(C_OBJECTS)) )
 ASM_OBJECT_FILES:=$(patsubst %.asm, $(COMPILATION_DIR)/%.o, $(notdir $(ASM_OBJECTS)))
@@ -74,3 +74,8 @@ run:
 
 run_debug: 
 	qemu-system-i386 -kernel $(KERNEL_PATH) -monitor telnet:127.0.0.1:1234,server,nowait -d cpu_reset -hda $(HARD_DRIVE_PATH)
+
+run_bootable: bootable
+		qemu-system-i386 -cdrom $(BOOTABLE_FLOPPY_NAME) -monitor telnet:127.0.0.1:1234,server,nowait -d cpu_reset -hda $(HARD_DRIVE_PATH)
+
+

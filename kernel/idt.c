@@ -82,6 +82,8 @@ void idt_init()
 
 	log_print(LOG_DEBUG, "Loading IDT table");
 	asm("lidt [idt_ptr]");
+
+	//Enable interrupts
 	asm("sti");
 
 	log_print(LOG_DEBUG, "IDT loaded successfuly!");

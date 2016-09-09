@@ -9,8 +9,6 @@
 #include "logger.h"
 #include "bitmap_manipulation.h"
 #include "physical_mm_manager.h"
-#include "common_constants.h"
-#include "common.h"
 
 typedef struct physical_mem_region
 {
@@ -176,3 +174,9 @@ void free_physical_page(void* page_address)
         physical_memory_regions[region_index].next_free_page = bit_index;
     }
 }
+
+bool_t register_ramdisk(void* start_address, void* end_address)
+{}
+
+bool_t unregister_ramdisk(void* start_address, void* end_address)
+{}

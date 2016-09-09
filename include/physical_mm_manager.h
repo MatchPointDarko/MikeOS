@@ -1,6 +1,7 @@
 #ifndef MIKE_OS_PHYSICAL_MM_MANAGER_H
 #define MIKE_OS_PHYSICAL_MM_MANAGER_H
 
+#include "common.h"
 #include "multiboot_info.h"
 
 /* Function: phy_memory_manager_init
@@ -27,5 +28,8 @@ void* allocate_physical_page();
  * page_addr: a pointer to the used physical page.
  */
 void free_physical_page(void* page_addr);
+
+bool_t register_ramdisk(void* start_address, void* end_address);
+bool_t unregister_ramdisk(void* start_address, void* end_address);
 
 #endif //MIKE_OS_PHYSICAL_MM_MANAGER_H
