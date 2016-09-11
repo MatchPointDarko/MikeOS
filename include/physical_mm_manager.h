@@ -1,6 +1,7 @@
 #ifndef MIKE_OS_PHYSICAL_MM_MANAGER_H
 #define MIKE_OS_PHYSICAL_MM_MANAGER_H
 
+#include "error_codes.h"
 #include "common.h"
 #include "multiboot_info.h"
 
@@ -29,7 +30,7 @@ void* allocate_physical_page();
  */
 void free_physical_page(void* page_addr);
 
-bool_t register_ramdisk(void* start_address, void* end_address);
-bool_t unregister_ramdisk(void* start_address, void* end_address);
+error_code_t register_ramdisk(void* start_address, void* end_address);
+error_code_t unregister_ramdisk(void* start_address, void* end_address);
 
 #endif //MIKE_OS_PHYSICAL_MM_MANAGER_H

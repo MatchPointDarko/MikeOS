@@ -1,3 +1,7 @@
+/*
+ * MikeOS: Virtual File System Implementation.
+ */
+
 #include "common.h"
 #include "panic.h"
 #include "kmalloc.h"
@@ -48,7 +52,7 @@ void vfs_init()
 /*
  * Mount a file system in the given path.
  */
-vfs_status_t vfs_mount(const char* path, file_system_t* fs)
+error_code_t vfs_mount(const char* path, file_system_t* fs)
 {
     if(path == NULL || fs == NULL)
     {

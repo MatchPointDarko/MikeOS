@@ -9,6 +9,7 @@
 #include "logger.h"
 #include "bitmap_manipulation.h"
 #include "physical_mm_manager.h"
+#include "error_codes.h"
 
 typedef struct physical_mem_region
 {
@@ -175,8 +176,8 @@ void free_physical_page(void* page_address)
     }
 }
 
-bool_t register_ramdisk(void* start_address, void* end_address)
+error_code_t register_ramdisk(void* start_address, void* end_address)
 {}
 
-bool_t unregister_ramdisk(void* start_address, void* end_address)
+error_code_t unregister_ramdisk(void* start_address, void* end_address)
 {}

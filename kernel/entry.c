@@ -20,6 +20,7 @@
 #include "memory.h"
 #include "panic.h"
 #include "list.h"
+#include "irq.h"
 
 /*
  * Booted from harddisk, probably already installed.
@@ -71,6 +72,9 @@ void kmain(struct multiboot_info* info)
 
     log_print(LOG_INFO, "Initializing IDT");
     idt_init();
+
+    log_print(LOG_INFO, "Initializing IRQ Handlers");
+    irq_init();
 
     log_print(LOG_INFO, "Initializing keyboard driver");
     keyboard_init();

@@ -5,6 +5,7 @@
 #include "initrd.h"
 /*******************************/
 
+#include "error_codes.h"
 #include "common.h"
 #include "device.h"
 
@@ -12,16 +13,6 @@
 #define MAX_FILE_NAME_LENGTH (128)
 #define MAX_PATH_LENGTH (300)
 #define PATH_SEPERATOR ('/')
-
-typedef enum
-{
-    SUCCESS,
-    FAILURE,
-    NO_SUCH_DIRECTORY,
-    NO_SUCH_FILE,
-    INVALID_ARGUMENT
-
-} vfs_status_t;
 
 typedef struct file_system file_system_t;
 
@@ -83,7 +74,7 @@ extern block_device_t* root_device;
 
 /**** Function prototypes ****/
 void vfs_init();
-vfs_status_t vfs_mount(const char* path, file_system_t* fs);
+error_code_t vfs_mount(const char* path, file_system_t* fs);
 uint32_t vfs_read(fs_node_t* node, uint32_t offset, uint32_t length, void* buffer);
 uint32_t vfs_write(fs_node_t* node, uint32_t offset, uint32_t length, void* buffer);
 fs_node_t* vfs_open(const char* path);

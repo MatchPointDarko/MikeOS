@@ -1,11 +1,13 @@
 #include "stdio.h"
 #include "port_io.h"
 #include "idt.h"
+#include "irq.h"
 #include "logger.h"
 #include "keyboard_driver.h"
 
-#define KERNEL_SEGMENT_CODE 0x08
 #define KEYBOARD_IDT_INDEX 0x21
+
+void keyboard_irq(void);
 
 static const unsigned char keyboard_map[128] =
 {
@@ -52,7 +54,7 @@ static char *vidptr = (char*)0xb8000; 	//video mem begins here.
 
 void keyboard_init(void)
 {
-    load_idt_entry(KEYBOARD_IDT_INDEX, (unsigned long) keyboard_handler, KERNEL_SEGMENT_CODE, 0x8e);
+    register_irq((irq_handler_t)keyboard_irq, 1);
 	/* 0xFD is 11111101 - enables only IRQ1 (keyboard)*/
 	write_port(0x21 , 0xFD);
     log_print(LOG_DEBUG, "Keyboard driver loaded successfuly!");
@@ -73,7 +75,4 @@ void keyboard_irq(void)
             printf("%c", keyboard_map[keycode]);
         }
     }
-
-    //ACK
-    write_port(0x20, 0x20);
 }
