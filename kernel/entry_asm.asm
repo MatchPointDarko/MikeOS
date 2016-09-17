@@ -11,8 +11,8 @@ extern load_gdt
 section .multiboot
 align 4
     dd 0x1BADB002 ;magic
-    dd 0x2 ;flags
-    dd - (0x1BADB002 + 0x02) ;checksum. m+f+c should be zero
+    dd 0x3 ;flags
+    dd - (0x1BADB002 + 0x3) ;checksum. m+f+c should be zero
 
 section .init
 start:

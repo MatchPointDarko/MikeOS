@@ -1,123 +1,4 @@
-/*
- * MikeOS: Virtual memory and paging manager.
- * TODO: Kernel virtual memory manager needs refactoring asap!
- */
-
-#include "common.h"
-#include "memory.h"
-#include "bitmap_manipulation.h"
-#include "physical_mm_manager.h"
-#include "common_constants.h"
-
-#define PAGE_SIZE 4096
-#define PAGE_DIRECTORY_SIZE (1024)
-#define PAGE_TABLE_SIZE (1024)
-#define KERNEL_DIRECTORY_ENTRY 768
-#define MAX_PAGE_DIRECTORY_INDEX 1023
-#define KERNEL_LATER_TABLE_START_ADDRESS (KERNEL_VIRTUAL_OFFSET + (PAGE_SIZE * PAGE_TABLE_SIZE))
-#define ADDRESS_TO_DIRECTORY_ENTRY(address) (address >> 22)
-
-/* Page bits */
-typedef enum
-{
-    PRESENT = 1,
-    READ_WRITE,
-    USER,
-    WRITE_THROUGH,
-    CACHE_DISABLED,
-    ACCESSED,
-    DIRTY,
-    GLOBAL
-
-} attributes_t;
-
-typedef uint32_t* page_table_ptr_tptr_t;
-typedef uint32_t* physical_page_ptr_t;
-typedef uint32_t* table_entry;
-
-page_table_ptr_tptr_t init_page_directory[PAGE_DIRECTORY_SIZE]
-__attribute__((aligned(PAGE_SIZE))) __attribute__((section(".tables"))) = {0};
-
-physical_page_ptr_t kernel_page_table[PAGE_TABLE_SIZE]
-__attribute__((aligned(PAGE_SIZE))) __attribute__((section(".tables"))) = {0};
-
-static inline void edit_entry_attributes(table_entry entry, attributes_t attributes)
-{
-    if(entry != NULL)
-    {
-        *entry |= attributes;
-    }
-}
-
-/*
- * Create the page table that points to the first 4MB(BIOS, and kernel)
- */
-static void __attribute__((section(".init"))) create_kernel_page_table()
-{
-   uint32_t current_page = 0;
-   for(int i = 0; i < PAGE_TABLE_SIZE; i++, current_page += PAGE_SIZE)
-   {
-       edit_entry_attributes(&kernel_page_table[i], READ_WRITE | PRESENT);
-   }
-}
-
-/*
- * Identity map the first 4MB to themselves.
- */
-__attribute__((section(".init"))) static void map_lower_mem()
-{
-    init_page_directory[0] = (page_table_ptr_tptr_t)kernel_page_table;
-    edit_entry_attributes(init_page_directory[0], READ_WRITE | PRESENT);
-}
-
-/*
- * Map the kernel page table, 0xc0000000 - 0xc04000000
- */
-__attribute__((section(".init"))) static void map_kernel_memory()
-{
-    init_page_directory[KERNEL_DIRECTORY_ENTRY] = (page_table_ptr_tptr_t)kernel_page_table;
-    edit_entry_attributes(&init_page_directory[KERNEL_DIRECTORY_ENTRY], READ_WRITE | PRESENT);
-}
-
-__attribute__((section(".init"))) static inline void enable_paging()
-{
-   //Update page directory register
-   asm("lea eax, [init_page_directory]");
-   asm("mov cr3, eax");
-   asm("mov eax, cr0");
-
-   //Turn paging bit on
-   asm("or eax, 0x80000000");
-   asm("mov cr0, eax");
-}
-
-__attribute__((section(".init"))) void paging_init()
-{
-    create_page_kernel_table();
-    map_lower_mem();
-    map_kernel_memory();
-    enable_paging();
-}
-
-/*
- * Create a recursive page directory.
- */
-__attribute__((section(".init"))) void recursive_page_directory_init()
-{
-
-
-
-}
-
-/*
- * Allocates
- */
-void* alloc_table()
-{}
-
-void free_table()
-{}
-
+#if 0
 #define KERNEL_HEAP_SIZE_MB 512
 #define PAGE_DIRECTORY_OFFSET 769
 #define KERNEL_HEAP_SIZE_B (KERNEL_HEAP_SIZE_MB * 1024 * 1024)
@@ -129,7 +10,7 @@ void free_table()
 static char bitmap[16384];
 static unsigned long current_free_page_index = 0;
 //128 Page tables for 512MB(512MB / 4MB), heap size = 512MB
-static physical_page_ptr_t kernel_page_tables[128][PAGE_TABLE_SIZE]
+static page_pointer_t kernel_page_tables[128][PAGE_TABLE_SIZE]
         __attribute__((section(".tables"))) __attribute__((aligned(PAGE_SIZE))) = {0};
 
 static inline void tlb_flush()
@@ -137,21 +18,21 @@ static inline void tlb_flush()
     asm("invlpg [0]");
 }
 
-void insert_kernel_page_tables(page_table_ptr_tptr_t* page_directory)
+void insert_kernel_page_tables(page_table_t** page_directory)
 {
     unsigned long directory_index = MANAGED_VMEM_START_ADDRESS >> 22;
     unsigned long max_index = (MANAGED_VMEM_START_ADDRESS + KERNEL_HEAP_SIZE_B) >> 22;
 
     //Identity map
-    page_directory[0] = (page_table_ptr_t*)((unsigned long)kernel_init_page_table | 0x3);
+    page_directory[0] = (page_table_t*)((unsigned long)kernel_init_page_table | 0x3);
 
     //Init page table contain the kernel itself
-    page_directory[KERNEL_DIRECTORY_ENTRY] = (page_table_ptr_t*)((unsigned long)kernel_init_page_table | 0x3);
+    page_directory[KERNEL_DIRECTORY_ENTRY] = (page_table_t*)((unsigned long)kernel_init_page_table | 0x3);
 
     //Heap page tables
     for(directory_index; directory_index < max_index; directory_index++)
     {
-        page_table_ptr_t* current_page_table = &kernel_page_tables[directory_index - PAGE_DIRECTORY_OFFSET][0];
+        page_table_t* current_page_table = &kernel_page_tables[directory_index - PAGE_DIRECTORY_OFFSET][0];
         page_directory[directory_index] = current_page_table;
     }
 }
@@ -194,7 +75,7 @@ void* allocate_kernel_virtual_page()
     phys_page = PRESENT(phys_page);
 
     //Remove the OR'd value:
-    kernel_page_directory[free_page_addr_dir_entry] = (page_table_ptr_t*)
+    kernel_page_directory[free_page_addr_dir_entry] = (page_table_t*)
             ((unsigned long)kernel_page_directory[free_page_addr_dir_entry]
              & 0xFFFFFFF0);
 
@@ -239,10 +120,11 @@ bool_t free_kernel_virtual_page(void* virtual_address)
     unsigned long addr_table_index = (aligned_addr >> 12) & 0x3ff;
 
     kernel_page_directory[addr_dir_entry][addr_table_index] = 0;
-    kernel_page_directory[addr_dir_entry] = (page_table_ptr_t *)
+    kernel_page_directory[addr_dir_entry] = (page_table_t *)
             (((unsigned long)kernel_page_directory[addr_dir_entry]) & 0xFFFFFFF0);
 
     tlb_flush();
 
     return true;
 }
+#endif

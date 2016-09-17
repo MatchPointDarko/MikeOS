@@ -28,9 +28,9 @@ void* allocate_physical_page();
  *
  * page_addr: a pointer to the used physical page.
  */
-void free_physical_page(void* page_addr);
+error_code_t free_physical_page(uint32_t page_address);
 
-error_code_t register_ramdisk(void* start_address, void* end_address);
-error_code_t unregister_ramdisk(void* start_address, void* end_address);
+error_code_t register_ramdisk(uint32_t start_address, uint32_t end_address);
+error_code_t unregister_ramdisk(uint32_t start_address, uint32_t end_address);
 
 #endif //MIKE_OS_PHYSICAL_MM_MANAGER_H

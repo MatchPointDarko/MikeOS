@@ -70,7 +70,7 @@ bootable: all
 	grub-mkrescue -o $(BOOTABLE_FLOPPY_NAME) $(GRUB_PATH)
 
 run:
-	qemu-system-i386 -kernel $(KERNEL_PATH) -hda $(HARD_DRIVE_PATH)
+	qemu-system-i386 -kernel $(KERNEL_PATH) -hda $(HARD_DRIVE_PATH) -h 1G
 
 run_debug: 
 	qemu-system-i386 -kernel $(KERNEL_PATH) -monitor telnet:127.0.0.1:1234,server,nowait -d cpu_reset -hda $(HARD_DRIVE_PATH)

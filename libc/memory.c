@@ -30,6 +30,11 @@ char extract_bit(char value, int bit_index)
    return (value >> (bit_index + (sizeof(char) * 8) - 1)) & 0x1;
 }
 
+/*
+ * MSB Index.
+ * << Low indices
+ * >> High indices
+ */
 unsigned int msb_index(unsigned char value)
 {
     unsigned int index = 0;

@@ -1,5 +1,8 @@
 /*
  * MikeOS: Physical memory manager.
+ * NOTE: The implementation is in the approach of KISS(Keep it simple stupid)
+ * I didn't want to make this complicated at first, because it fulfills its purpose quite well.
+ * Maybe a refactoring will occur in the future.
  */
 
 #include "logger.h"
@@ -11,25 +14,72 @@
 #include "physical_mm_manager.h"
 #include "error_codes.h"
 
-typedef struct physical_mem_region
+#define ADDRESS_SPACE_SIZE (0x100000000) // 4GB
+#define BITMAP_SIZE ((ADDRESS_SPACE_SIZE) / (PAGE_SIZE))
+
+typedef enum page_state { PAGE_AVAILABLE, PAGE_UNAVAILABLE } page_state_t;
+
+typedef struct physical_mem
 {
-    char* bitmap;
-    unsigned int bitmap_size;
-    unsigned long size;
-    unsigned long base_address;
-    unsigned int next_free_page;
+    uint8_t bitmap[BITMAP_SIZE];
+    bool_t no_page_available;
 
-} physical_mem_region_t;
+} physical_mem_t;
 
-static unsigned int number_of_regions = 0;
-static physical_mem_region_t* physical_memory_regions = NULL;
+static error_code_t change_pages_state(uint32_t begin, uint32_t end, page_state_t state);
+static error_code_t change_page_state(uint32_t page_address, page_state_t state);
+
+static physical_mem_t physical_memory = {{0}, false};
+
+static error_code_t change_page_state(uint32_t page_address, page_state_t state)
+{
+    if(PAGE_BOUNDARY(page_address) != page_address)
+    {
+        return INVALID_ARGUMENT;
+    }
+
+    uint32_t byte_index = page_address / PAGE_SIZE / sizeof(uint8_t) * 8;
+    uint32_t bit_index = address_to_bit_index(page_address, 0);
+
+    if(state == PAGE_UNAVAILABLE)
+    {
+        turn_bit_off(&physical_memory.bitmap[byte_index], bit_index);
+    }
+    else if(state == PAGE_UNAVAILABLE)
+    {
+        turn_bit_on(&physical_memory.bitmap[byte_index], bit_index);
+    }
+
+    return SUCCESS;
+}
+
+static error_code_t change_pages_state(uint32_t begin, uint32_t end, page_state_t state)
+{
+    if(PAGE_BOUNDARY(begin) != begin || PAGE_BOUNDARY(end) != end)
+    {
+        return INVALID_ARGUMENT;
+    }
+
+    if(end < begin)
+    {
+        return INVALID_ARGUMENT;
+    }
+
+    for(uint32_t address = begin; address <= end; address += PAGE_SIZE)
+    {
+        if(change_page_state(address, state) != SUCCESS)
+        {
+            //Undefined behavior, shouldn't happen.
+            return FAILURE;
+        }
+    }
+
+    return SUCCESS;
+}
 
 /* Map the RAM, using the GRUB memory map. */
 void map_memory(multiboot_memory_map_t* map_addr, unsigned int map_length)
 {
-    unsigned long bitmap_size = 0;
-    bool_t found_first_available_region = false;
-
     log_print(LOG_DEBUG, "Starting to map the RAM");
     for(multiboot_memory_map_t* map_iterator = map_addr;
         map_iterator < (map_addr + map_length);
@@ -37,147 +87,73 @@ void map_memory(multiboot_memory_map_t* map_addr, unsigned int map_length)
     {
         if(map_iterator->type == MULTIBOOT_MEMORY_AVAILABLE)
         {
-            if(found_first_available_region == false)
-            {
-                // Start managing memory only after the kernel
-                if(map_iterator->addr <= KERNEL_START &&
-                     KERNEL_START <= (map_iterator->addr + map_iterator->len))
-                {
-                    log_print(LOG_DEBUG, "Address: %x --- Length: %d", map_iterator->addr,
-                                                                       map_iterator->len);
-                    physical_memory_regions = (physical_mem_region_t*)(KERNEL_END + KERNEL_VIRTUAL_OFFSET);
-                    physical_memory_regions[number_of_regions].size = map_iterator->len - KERNEL_SIZE;
-                    bitmap_size += map_iterator->len - KERNEL_SIZE;
-
-                    number_of_regions++;
-
-                    found_first_available_region = true;
-                }
-            }
-            else
-            {
-                log_print(LOG_DEBUG, "Address: %x --- Length: %d", map_iterator->addr,
-                                                                       map_iterator->len);
-                physical_memory_regions[number_of_regions].size = map_iterator->len;
-                physical_memory_regions[number_of_regions].base_address = map_iterator->addr;
-                bitmap_size += map_iterator->len;
-
-                number_of_regions++;
-            }
+            log_print(LOG_DEBUG, "Address: %x --- Length: %x", map_iterator->addr, map_iterator->len);
+            change_pages_state(map_iterator->addr, map_iterator->addr + map_iterator->len, PAGE_AVAILABLE);
         }
     }
-
-    //Allocate a bitmap
-    char* bitmap = (char *)&physical_memory_regions[number_of_regions];
-
-    bitmap_size /= PAGE_SIZE;
-    bitmap_size /= sizeof(char) * 8;
-
-    memset(PAGE_AVAILABLE, (void *)bitmap, bitmap_size);
-
-    char* physical_bitmap_address = (char *)((unsigned long) bitmap - KERNEL_VIRTUAL_OFFSET);
-    physical_memory_regions[0].base_address = NEXT_PAGE_BOUNDARY(physical_bitmap_address + bitmap_size);
-    physical_memory_regions[number_of_regions].size -= number_of_regions * sizeof(physical_mem_region_t);
-    physical_memory_regions[number_of_regions].size -= bitmap_size;
-
-    unsigned int last_size = 0;
-    unsigned int region_offset = 0;
-
-    for(int i = 0; i < number_of_regions; i++)
-    {
-        physical_memory_regions[i].bitmap = bitmap + region_offset;
-        physical_memory_regions[i].next_free_page = region_offset;
-        physical_memory_regions[i].bitmap_size = physical_memory_regions[i].size / PAGE_SIZE / (sizeof(char) * 8);
-        region_offset += physical_memory_regions[i].bitmap_size;
-    }
-
-    log_print(LOG_DEBUG, "Physical Memory mapped successfuly!");
 }
-
 
 void phy_memory_manager_init(multiboot_memory_map_t* map_addr, unsigned int map_length)
 {
     map_memory(map_addr, map_length);
+
+    //Low 1MB
+    change_pages_state(0, 0xff000, PAGE_UNAVAILABLE);
+
+    //Kernel
+    change_pages_state((uint32_t)kernel_start, (uint32_t)&kernel_end, PAGE_UNAVAILABLE);
 }
 
 /* Allocate a single page. */
 void* allocate_physical_page()
 {
-    for(int i = 0; i < number_of_regions; i++)
+    if(physical_memory.no_page_available)
     {
-        physical_mem_region_t* current_region = &physical_memory_regions[i];
-        if(current_region->next_free_page == NO_AVAILABLE_PAGE)
-        {
-            continue;
-        }
-
-        // Bit index in a byte
-        unsigned char bit_index = current_region->next_free_page % (sizeof(char) * 8);
-        unsigned long bitmap_index = bit_index_to_byte_index(current_region->next_free_page);
-
-        turn_bit_off(&current_region->bitmap[bitmap_index], bit_index);
-
-        void *free_page_address = (void *)
-                                  (current_region->base_address +
-                                          (PAGE_SIZE * (current_region->next_free_page)));
-        set_next_free_page_index(current_region->bitmap,
-                                 current_region->bitmap_size,
-                                 (unsigned long*)&current_region->next_free_page);
-        return free_page_address;
+        return NULL;
     }
 
-    // :-(
+    //Locate an available memory page
+    //Skip the lower 1MB and Kernel
+    for(uint32_t i = ((uint32_t)&kernel_end) / PAGE_SIZE / sizeof(uint8_t) * 8;
+        i < BITMAP_SIZE;
+        ++i)
+    {
+        if(physical_memory.bitmap[i] != 0)
+        {
+            uint32_t bit_index_in_bitmap = (i * 8) + msb_index(physical_memory.bitmap[i]);
+            uint32_t address = bit_index_in_bitmap * PAGE_SIZE;
+
+            change_page_state(address, PAGE_UNAVAILABLE);
+
+            return (void*)address;
+        }
+    }
+
+    physical_memory.no_page_available = true;
     return NULL;
 }
 
-unsigned int address_to_region(unsigned long address)
+error_code_t free_physical_page(uint32_t page_address)
 {
-    for(int i = 0; i < number_of_regions; i++)
-    {
-        unsigned long base = physical_memory_regions[i].base_address;
-        unsigned long end = base + physical_memory_regions[i].size;
+    error_code_t error_code = SUCCESS;
 
-        if(address >= base && address < end)
+    if((error_code = change_page_state(page_address, PAGE_AVAILABLE) == SUCCESS))
+    {
+        if(physical_memory.no_page_available)
         {
-            return i;
+            physical_memory.no_page_available = false;
         }
     }
 
-    return -1;
+    return error_code;
 }
 
-void free_physical_page(void* page_address)
+error_code_t register_ramdisk(uint32_t start_address, uint32_t end_address)
 {
-    //Not aligned?
-    if(PAGE_BOUNDARY(page_address) != (unsigned long)page_address)
-    {
-        kernel_panic();
-    }
-
-    unsigned int region_index = address_to_region((unsigned long)page_address);
-    if(region_index == -1)
-    {
-        // :-(
-        kernel_panic();
-    }
-
-    unsigned long bit_index = address_to_bit_index(page_address,
-                                                   (void *) physical_memory_regions[region_index].base_address);
-
-    unsigned long bit_location = bit_index % (sizeof(char) * 8);
-    unsigned long bitmap_index = bit_index_to_byte_index(bit_index);
-
-    turn_bit_on(&physical_memory_regions[region_index].bitmap[bitmap_index], bit_location);
-
-    //Check bit index is lower than the current free page
-    if (bit_index < physical_memory_regions[region_index].next_free_page)
-    {
-        physical_memory_regions[region_index].next_free_page = bit_index;
-    }
+    return change_pages_state(start_address, end_address, PAGE_UNAVAILABLE);
 }
 
-error_code_t register_ramdisk(void* start_address, void* end_address)
-{}
-
-error_code_t unregister_ramdisk(void* start_address, void* end_address)
-{}
+error_code_t unregister_ramdisk(uint32_t start_address, uint32_t end_address)
+{
+    return change_pages_state(start_address, end_address, PAGE_AVAILABLE);
+}

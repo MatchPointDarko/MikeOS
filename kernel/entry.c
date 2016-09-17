@@ -54,6 +54,8 @@ static inline void make_initrd_fs(struct multiboot_info* info, file_system_t* fs
     fs->partition_end_offset = ((multiboot_module_t*)info->mods_addr)->mod_end;
     fs->fs_specific = fs->partition_end_offset - fs->partition_begin_offset;
     fs->device = NULL;
+
+    printf("%x\n", fs->partition_begin_offset);
 }
 
 void kmain(struct multiboot_info* info)
@@ -97,6 +99,26 @@ void kmain(struct multiboot_info* info)
         log_print(LOG_ERROR, "Couldn't mount initrd");
         kernel_panic();
     }
+
+    typedef struct physical_page
+    {
+        uint32_t present : 1;
+        uint32_t permissions: 1;
+        uint32_t owner : 1;
+        uint32_t write_through : 1;
+        uint32_t cache_disabled : 1;
+        uint32_t accessed : 1;
+        uint32_t dirty : 1;
+        uint32_t foo_bit : 1;
+        uint32_t global : 1;
+        uint32_t available: 3;
+        uint32_t physical_address : 20;
+
+    } __attribute__((packed)) physical_page_t;
+
+    physical_page_t shit = {{0xFFFFFFFF}};
+    shit.physical_address = 0x123456;
+    printf("%x\n", shit.present);
 
     HLT();
 }

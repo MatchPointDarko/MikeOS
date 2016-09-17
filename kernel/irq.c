@@ -38,6 +38,7 @@ extern void irq_12();
 extern void irq_13();
 extern void irq_14();
 extern void irq_15();
+
 extern inline void irq_ack(uint32_t irq_number);
 
 static irq_handler_t irq_handlers[NUMBER_OF_IRQS] = {NULL, };
@@ -74,7 +75,6 @@ inline void irq_ack(uint32_t irq_number)
     }
 }
 
-//Generic irq handler.
 void default_irq_handler(regs_t* registers)
 {
     if(irq_handlers[registers->irq_number])
@@ -83,7 +83,7 @@ void default_irq_handler(regs_t* registers)
     }
     else
     {
-        log_print(LOG_WARNING, "Received IRQ %d but no handler found.", registers->irq_number);
+        log_print(LOG_WARNING, "Received IRQ %d but no handler found", registers->irq_number);
     }
 
     irq_ack(registers->irq_number);

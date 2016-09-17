@@ -1,6 +1,7 @@
 ;MikeOS: Assembly file of IRQ.
 
 %macro IRQ_ENTRY 1
+
 global irq_%1
 irq_%1:
     pushad

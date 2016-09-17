@@ -1,3 +1,7 @@
+/*
+ * MikeOS: PS/2 Keyboard driver.
+ */
+
 #include "stdio.h"
 #include "port_io.h"
 #include "idt.h"
