@@ -26,24 +26,10 @@ void set_next_free_page_index(char* bitmap, unsigned long bitmap_size, unsigned 
     {
         if(bitmap[i] != 0x00)
         {
-            *current_free_page_index = (i * 8) + msb_index(bitmap[i]);
+            *current_free_page_index = (i * 8) + get_msb_index(bitmap[i]);
             return;
         }
     }
 
     *current_free_page_index = NO_AVAILABLE_PAGE;
 }
-
-void search_for_continuous_bits(char* buf, uint32_t number_of_bits)
-{
-    //Assumes buf size:
-    uint32_t buf_size = (number_of_bits / 8) + 1;
-
-
-
-
-
-}
-
-
-

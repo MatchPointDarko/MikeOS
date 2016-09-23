@@ -30,5 +30,5 @@ SECTIONS
                          { *(.bss)  }
     kernel_high_half_end = .;
 
-    kernel_end = . - KERNEL_VIRTUAL_OFFSET;
+    kernel_end = ALIGN(4K) - KERNEL_VIRTUAL_OFFSET;
 }

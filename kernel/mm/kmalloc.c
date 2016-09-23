@@ -3,7 +3,9 @@
  */
 #include "kmalloc.h"
 #include "common.h"
-#include "paging_manager.h"
+#include "paging.h"
+#include "kheap.h"
+
 #include "physical_mm_manager.h"
 
 #define PAGE_SIZE 4096
@@ -22,7 +24,7 @@ static block_header_t* free_blocks_list = NULL;
 static void* increase_heap_size()
 {
    block_header_t* insert = NULL;
-   void* free_page = allocate_kernel_virtual_page();
+   void* free_page = alloc_kheap_pages(1);
 
    if(free_page == NULL)
    {
@@ -115,8 +117,6 @@ void* kmalloc(size_t size)
 
 /*
  * Add the address to the end of the linked list.
- * NOTE: Assumes the address is valid! i have no way of checking,
- * i can add a magic number, but comon -,-
  */
 void kfree(void* address)
 {

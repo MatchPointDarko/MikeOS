@@ -26,6 +26,9 @@ start:
     push ebx ;grub boot info
     call kmain
 
+loop:
+    jmp loop
+
 ;4KB small stack for my init section.
 resb 4096
 init_stack:

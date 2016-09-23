@@ -24,4 +24,5 @@ extern unsigned long kernel_high_half_end;
 
 #define PAGE_SIZE 4096 //4KB
 
+
 #endif //MIKE_OS_EXTERNAL_LINKER_SYMBOLS_H

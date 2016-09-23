@@ -16,6 +16,8 @@ INITRD_DIR = '/home/sourcer/mike_os/grub/boot/'
 INITRD_NAME = 'initrd.img'
 INITRD_PATH = os.path.join(INITRD_DIR, INITRD_NAME)
 NAME_SIZE = 20
+GARBAGE_VALUE = 'U'
+PAGE_SIZE = 4096
 
 def inode_to_raw(name, offset, size):
 
@@ -65,6 +67,17 @@ def create_initrd(directory_name):
         for file_path in files_paths:
             with open(file_path, 'rb') as file_obj:
                 initrd.write(file_obj.read())
+
+    # If not aligned to 4K, align it
+    size = os.stat(initrd.name)[6]
+    if size % 4096 != 0:
+
+        aligned_size = (size & ~(PAGE_SIZE - 1))
+        if aligned_size < size:
+            aligned_size += PAGE_SIZE
+
+        with open(INITRD_PATH, 'a+') as initrd:
+            initrd.write(GARBAGE_VALUE * (aligned_size - size))
 
 def main(directory_name):
     if not os.path.isdir(directory_name):

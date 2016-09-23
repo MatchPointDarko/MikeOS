@@ -13,11 +13,10 @@
 #include "bitmap_manipulation.h"
 #include "physical_mm_manager.h"
 #include "error_codes.h"
+#include "paging.h"
 
 #define ADDRESS_SPACE_SIZE (0x100000000) // 4GB
-#define BITMAP_SIZE ((ADDRESS_SPACE_SIZE) / (PAGE_SIZE))
-
-typedef enum page_state { PAGE_AVAILABLE, PAGE_UNAVAILABLE } page_state_t;
+#define BITMAP_SIZE ((ADDRESS_SPACE_SIZE) / (PAGE_SIZE) / 8)
 
 typedef struct physical_mem
 {
@@ -29,7 +28,7 @@ typedef struct physical_mem
 static error_code_t change_pages_state(uint32_t begin, uint32_t end, page_state_t state);
 static error_code_t change_page_state(uint32_t page_address, page_state_t state);
 
-static physical_mem_t physical_memory = {{0}, false};
+static physical_mem_t physical_memory = {{0, }, false};
 
 static error_code_t change_page_state(uint32_t page_address, page_state_t state)
 {
@@ -38,16 +37,17 @@ static error_code_t change_page_state(uint32_t page_address, page_state_t state)
         return INVALID_ARGUMENT;
     }
 
-    uint32_t byte_index = page_address / PAGE_SIZE / sizeof(uint8_t) * 8;
     uint32_t bit_index = address_to_bit_index(page_address, 0);
+    uint32_t byte_index = bit_index / 8;
 
     if(state == PAGE_UNAVAILABLE)
     {
-        turn_bit_off(&physical_memory.bitmap[byte_index], bit_index);
+        turn_bit_off(&physical_memory.bitmap[byte_index], bit_index % 8);
     }
-    else if(state == PAGE_UNAVAILABLE)
+
+    else if(state == PAGE_AVAILABLE)
     {
-        turn_bit_on(&physical_memory.bitmap[byte_index], bit_index);
+        turn_bit_on(&physical_memory.bitmap[byte_index], bit_index % 8);
     }
 
     return SUCCESS;
@@ -65,7 +65,7 @@ static error_code_t change_pages_state(uint32_t begin, uint32_t end, page_state_
         return INVALID_ARGUMENT;
     }
 
-    for(uint32_t address = begin; address <= end; address += PAGE_SIZE)
+    for(uint32_t address = begin; address < end; address += PAGE_SIZE)
     {
         if(change_page_state(address, state) != SUCCESS)
         {
@@ -87,8 +87,41 @@ void map_memory(multiboot_memory_map_t* map_addr, unsigned int map_length)
     {
         if(map_iterator->type == MULTIBOOT_MEMORY_AVAILABLE)
         {
-            log_print(LOG_DEBUG, "Address: %x --- Length: %x", map_iterator->addr, map_iterator->len);
-            change_pages_state(map_iterator->addr, map_iterator->addr + map_iterator->len, PAGE_AVAILABLE);
+            log_print(LOG_DEBUG, "Address: %x", map_iterator->addr);
+            log_print(LOG_DEBUG, "Length: %x", map_iterator->len);
+
+            uint32_t address = map_iterator->addr;
+            uint32_t len = map_iterator->len;
+
+            if(PAGE_BOUNDARY(address) != address)
+            {
+                address = NEXT_PAGE_BOUNDARY(address);
+                if(len <= PAGE_SIZE)
+                {
+                    continue;
+                }
+
+                len -= (address - map_iterator->addr);
+            }
+
+            if(PAGE_BOUNDARY(len) != len)
+            {
+                if(PAGE_BOUNDARY(len) < len)
+                {
+                    len = PAGE_BOUNDARY(len);
+                }
+
+                else
+                {
+                    len = PAGE_BOUNDARY(len) - PAGE_SIZE;
+                }
+            }
+
+            if(change_pages_state(address, address + len, PAGE_AVAILABLE)
+                        != SUCCESS)
+            {
+                kernel_panic();
+            }
         }
     }
 }
@@ -101,7 +134,7 @@ void phy_memory_manager_init(multiboot_memory_map_t* map_addr, unsigned int map_
     change_pages_state(0, 0xff000, PAGE_UNAVAILABLE);
 
     //Kernel
-    change_pages_state((uint32_t)kernel_start, (uint32_t)&kernel_end, PAGE_UNAVAILABLE);
+    change_pages_state((uint32_t)&kernel_start, (uint32_t)&kernel_end, PAGE_UNAVAILABLE);
 }
 
 /* Allocate a single page. */
@@ -114,13 +147,13 @@ void* allocate_physical_page()
 
     //Locate an available memory page
     //Skip the lower 1MB and Kernel
-    for(uint32_t i = ((uint32_t)&kernel_end) / PAGE_SIZE / sizeof(uint8_t) * 8;
+    for(uint32_t i = ((uint32_t)&kernel_end) / PAGE_SIZE / (sizeof(uint8_t) * 8);
         i < BITMAP_SIZE;
         ++i)
     {
         if(physical_memory.bitmap[i] != 0)
         {
-            uint32_t bit_index_in_bitmap = (i * 8) + msb_index(physical_memory.bitmap[i]);
+            uint32_t bit_index_in_bitmap = (i * 8) + get_msb_index(physical_memory.bitmap[i]);
             uint32_t address = bit_index_in_bitmap * PAGE_SIZE;
 
             change_page_state(address, PAGE_UNAVAILABLE);
