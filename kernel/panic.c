@@ -2,7 +2,7 @@
  * MikeOS: Kernel panic.
  */
 
-#include <logger.h>
+#include <logging/logger.h>
 #include <common.h>
 
 void kernel_panic()

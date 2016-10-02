@@ -2,8 +2,8 @@
  * MikeOS: GDT Initializing.
  */
 
-#include <stdio.h>
-#include <logger.h>
+#include <libc/stdio.h>
+#include <logging/logger.h>
 #include <common.h>
 
 struct gdt_entry

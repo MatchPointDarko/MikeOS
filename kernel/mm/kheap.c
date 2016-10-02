@@ -3,12 +3,12 @@
  */
 
 #include <common.h>
-#include <paging.h>
-#include <memory.h>
-#include <physical_mm_manager.h>
-#include <kheap.h>
-#include <bitmap_manipulation.h>
-#include <virtual_mm_manager.h>
+#include <libc/memory.h>
+#include <mm/paging.h>
+#include <mm/physical_mm_manager.h>
+#include <mm/kheap.h>
+#include <mm/bitmap_manipulation.h>
+#include <mm/virtual_mm_manager.h>
 
 #define KHEAP_BITMAP_SIZE (32768 * 4) //4MB
 #define KHEAP_BEGIN_ADDRESS (KERNEL_VIRTUAL_OFFSET + (2 * 1024 * 1024 * 4))

@@ -2,8 +2,8 @@
  * MikeOS: A list implemntation.
  */
 
-#include <list.h>
-#include <kmalloc.h>
+#include <data_structures/list.h>
+#include <mm/kmalloc.h>
 
 typedef struct node
 {

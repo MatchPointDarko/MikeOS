@@ -2,14 +2,14 @@
  * MikeOS: ATA Driver. PIO, LBA28 is good for now.
  * TODO: Add usage of DMA, LBA48, ATAPI, in the future, REDESIGN.
  */
-#include <logger.h>
+#include <logging/logger.h>
 #include <common.h>
-#include <port_io.h>
+#include <port_io/port_io.h>
 #include <panic.h>
-#include <string.h>
-#include <ata.h>
-#include <memory.h>
-#include <vfs.h>
+#include <libc/string.h>
+#include <drivers/ata/ata.h>
+#include <libc/memory.h>
+#include <fs/vfs.h>
 
 #define ATA_DATA_PORT (0x0)
 #define ATA_FEATURES_PORT (0x1)

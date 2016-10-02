@@ -2,9 +2,9 @@
  * MikeOS: VGA Driver.
  * TODO: VGA module needs refactoring ASAP, ugly, and really really stupid.
  */
-#include <vga.h>
+#include <drivers/vga/vga.h>
 #include <common.h>
-#include <kheap.h>
+#include <mm/kheap.h>
 
 #define SCREEN_COLS 80
 #define SCREEN_ROWS 25

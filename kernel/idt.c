@@ -2,9 +2,9 @@
  * MikeOS: IDT Initializing.
  */
 
-#include <port_io.h>
-#include <logger.h>
-#include <keyboard_driver.h>
+#include <port_io/port_io.h>
+#include <logging/logger.h>
+#include <drivers/keyboard/keyboard_driver.h>
 #include <idt.h>
 
 #define IDT_SIZE 256

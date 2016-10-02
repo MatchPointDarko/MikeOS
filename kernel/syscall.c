@@ -4,7 +4,7 @@
 
 #include <idt.h>
 #include <common.h>
-#include <logger.h>
+#include <logging/logger.h>
 
 #define SYSCALL_IDT_ENTRY (0x80)
 #define SYSCALL_RETURN(val) (registers->eax = val)

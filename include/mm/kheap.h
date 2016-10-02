@@ -3,7 +3,7 @@
 
 #include <common.h>
 #include <error_codes.h>
-#include <paging.h>
+#include <mm/paging.h>
 
 void* alloc_kheap_pages(uint32_t num_pages);
 error_code_t free_kheap_pages(void* address, uint32_t num_pages);

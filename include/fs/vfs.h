@@ -2,12 +2,12 @@
 #define MIKE_OS_VFS_H
 
 /**** File systems supported ****/
-#include "initrd.h"
+#include <fs/initrd.h>
 /*******************************/
 
-#include "error_codes.h"
-#include "common.h"
-#include "device.h"
+#include <error_codes.h>
+#include <common.h>
+#include <dev/device.h>
 
 #define IS_DIRECTORY(flags) (flags & 0x7)
 #define MAX_FILE_NAME_LENGTH (128)

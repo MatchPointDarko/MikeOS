@@ -1,7 +1,7 @@
 #ifndef MIKE_OS_BITMAP_MANIPULATION_H
 #define MIKE_OS_BITMAP_MANIPULATION_H
 
-#include "common.h"
+#include <common.h>
 
 #define NO_AVAILABLE_PAGE (-1)
 #define PAGE_ALIGN(value) (((unsigned long)value) & ~(PAGE_SIZE - 1))

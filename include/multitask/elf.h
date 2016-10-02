@@ -1,7 +1,7 @@
 #ifndef MIKE_OS_ELF_H
 #define MIKE_OS_ELF_H
 
-#include "common.h"
+#include <common.h>
 
 #define ELF_NIDENT	16
 #define ELFMAG0	(0x7F)// e_ident[EI_MAG0]

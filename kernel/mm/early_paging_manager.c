@@ -4,7 +4,7 @@
  */
 
 #include <common.h>
-#include <paging.h>
+#include <mm/paging.h>
 
 page_table_ptr_t init_page_directory[PAGE_DIRECTORY_SIZE]
 __attribute__((aligned(PAGE_SIZE))) __attribute__((section(".tables"))) = {0};

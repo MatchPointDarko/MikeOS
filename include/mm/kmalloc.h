@@ -1,7 +1,7 @@
 #ifndef MIKE_OS_KMALLOC_H
 #define MIKE_OS_KMALLOC_H
 
-#include "common.h"
+#include <common.h>
 
 /* Function: kmalloc
  * ------------------

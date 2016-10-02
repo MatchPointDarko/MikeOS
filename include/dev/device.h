@@ -1,7 +1,7 @@
 #ifndef MIKE_OS_DEVICE_H
 #define MIKE_OS_DEVICE_H
 
-#include "common.h"
+#include <common.h>
 
 #define MAX_DEVICES (50)
 #define MAX_NAME_SIZE (41)

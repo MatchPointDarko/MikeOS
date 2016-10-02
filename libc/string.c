@@ -3,7 +3,7 @@
  */
 
 #include <common.h>
-#include <string.h>
+#include <libc/string.h>
 
 char* strcpy(char* dest, const char* source)
 {

@@ -5,26 +5,26 @@
 
 #include <gdt.h>
 #include <idt.h>
-#include <kmalloc.h>
-#include <vga.h>
-#include <ata.h>
-#include <port_io.h>
-#include <stdio.h>
-#include <keyboard_driver.h>
+#include <mm/kmalloc.h>
+#include <mm/physical_mm_manager.h>
+#include <mm/virtual_mm_manager.h>
+#include <multitask/userspace_manager.h>
+#include <drivers/vga/vga.h>
+#include <drivers/ata/ata.h>
+#include <port_io/port_io.h>
+#include <libc/stdio.h>
+#include <drivers/keyboard/keyboard_driver.h>
 #include <multiboot_info.h>
-#include <physical_mm_manager.h>
-#include <virtual_mm_manager.h>
-#include <userspace_manager.h>
-#include <paging.h>
+#include <mm/paging.h>
 #include <common.h>
-#include <logger.h>
-#include <vfs.h>
-#include <memory.h>
+#include <logging/logger.h>
+#include <fs/vfs.h>
+#include <libc/memory.h>
 #include <panic.h>
-#include <list.h>
+#include <data_structures/list.h>
 #include <irq.h>
-#include <kheap.h>
-#include <file.h>
+#include <mm/kheap.h>
+#include <fs/file.h>
 #include <syscall.h>
 
 /*

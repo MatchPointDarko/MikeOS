@@ -5,15 +5,14 @@
  * Maybe a refactoring will occur in the future.
  */
 
-#include <logger.h>
+#include <logging/logger.h>
 #include <panic.h>
-#include <stdio.h>
-#include <memory.h>
-#include <logger.h>
-#include <bitmap_manipulation.h>
-#include <physical_mm_manager.h>
+#include <libc/stdio.h>
+#include <libc/memory.h>
+#include <mm/bitmap_manipulation.h>
+#include <mm/physical_mm_manager.h>
+#include <mm/paging.h>
 #include <error_codes.h>
-#include <paging.h>
 
 #define ADDRESS_SPACE_SIZE (0x100000000) // 4GB
 #define BITMAP_SIZE ((ADDRESS_SPACE_SIZE) / (PAGE_SIZE) / 8)

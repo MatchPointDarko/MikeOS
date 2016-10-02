@@ -1,8 +1,8 @@
 #ifndef MIKE_OS_HARDDRIVE_H
 #define MIKE_OS_HARDDRIVE_H
 
-#include "common.h"
-#include "device.h"
+#include <common.h>
+#include <dev/device.h>
 
 typedef struct ata_device ata_device_t;
 

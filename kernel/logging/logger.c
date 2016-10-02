@@ -1,6 +1,6 @@
-#include "vga.h"
-#include "stdio.h"
-#include "logger.h"
+#include <drivers/vga/vga.h>
+#include <libc/stdio.h>
+#include <logging/logger.h>
 
 #define COLOR_INFO COLOR_LIGHT_BLUE
 #define COLOR_WARNING COLOR_LIGHT_MAGENTA

@@ -2,11 +2,11 @@
  * MikeOS: IRQ default handler, and irq redirection.
  */
 
-#include <port_io.h>
+#include <port_io/port_io.h>
 #include <error_codes.h>
 #include <common.h>
 #include <idt.h>
-#include <logger.h>
+#include <logging/logger.h>
 #include <irq.h>
 
 #define SLAVE_PIC_CMD (0xA0)

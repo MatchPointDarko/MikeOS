@@ -2,12 +2,12 @@
  * MikeOS: PS/2 Keyboard driver.
  */
 
-#include "stdio.h"
-#include "port_io.h"
-#include "idt.h"
-#include "irq.h"
-#include "logger.h"
-#include "keyboard_driver.h"
+#include <libc/stdio.h>
+#include <port_io/port_io.h>
+#include <idt.h>
+#include <irq.h>
+#include <logging/logger.h>
+#include <drivers/keyboard/keyboard_driver.h>
 
 #define KEYBOARD_IDT_INDEX 0x21
 

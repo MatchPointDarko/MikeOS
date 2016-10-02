@@ -1,7 +1,7 @@
 #ifndef MIKE_OS_VIRTUAL_MM_MANAGER_H
 #define MIKE_OS_VIRTUAL_MM_MANAGER_H
 
-#include <paging.h>
+#include <mm/paging.h>
 #include <error_codes.h>
 #include <common.h>
 

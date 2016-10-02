@@ -4,12 +4,12 @@
 
 #include <common.h>
 #include <panic.h>
-#include <kmalloc.h>
-#include <memory.h>
-#include <string.h>
-#include <vfs.h>
-#include <list.h>
-#include <logger.h>
+#include <mm/kmalloc.h>
+#include <libc/memory.h>
+#include <libc/string.h>
+#include <fs/vfs.h>
+#include <data_structures/list.h>
+#include <logging/logger.h>
 
 typedef struct mount_point
 {

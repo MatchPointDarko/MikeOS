@@ -2,8 +2,8 @@
  * MikeOS: A minimal implementation of printf.
  */
 
-#include <stdio.h>
-#include <vga.h>
+#include <libc/stdio.h>
+#include <drivers/vga/vga.h>
 
 #define PAD_RIGHT 1
 #define PAD_ZERO 2

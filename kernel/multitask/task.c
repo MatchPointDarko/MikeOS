@@ -1,13 +1,13 @@
 /*
  * MikeOS: Task implementation. (A task is another name for a thread)
  */
-#include <kmalloc.h>
-#include <virtual_mm_manager.h>
-#include <userspace_manager.h>
+#include <mm/kmalloc.h>
+#include <mm/virtual_mm_manager.h>
+#include <multitask/userspace_manager.h>
+#include <mm/kheap.h>
 #include <common.h>
-#include <memory.h>
-#include <string.h>
-#include <kheap.h>
+#include <libc/memory.h>
+#include <libc/string.h>
 
 #define KERNEL_STACK_SIZE (PAGE_SIZE)
 

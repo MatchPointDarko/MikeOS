@@ -4,13 +4,13 @@
  * (kheap, early paging are exceptions)
  */
 
-#include <kmalloc.h>
 #include <common.h>
 #include <error_codes.h>
-#include <kheap.h>
-#include <memory.h>
-#include <virtual_mm_manager.h>
-#include <physical_mm_manager.h>
+#include <libc/memory.h>
+#include <mm/kheap.h>
+#include <mm/kmalloc.h>
+#include <mm/virtual_mm_manager.h>
+#include <mm/physical_mm_manager.h>
 
 #define USER_SPACE_LIMIT (767)
 

@@ -1,7 +1,7 @@
 #ifndef MIKE_OS_STRING_H
 #define MIKE_OS_STRING_H
 
-#include "common.h"
+#include <common.h>
 
 char* strcpy(char* dest, const char* source);
 char* strncpy(char* dest, const char* source, int num);

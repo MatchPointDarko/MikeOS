@@ -1,7 +1,7 @@
 #ifndef MIKE_OS_PAGING_H
 #define MIKE_OS_PAGING_H
 
-#include "common_constants.h"
+#include <common_constants.h>
 
 typedef enum page_state { PAGE_UNAVAILABLE = 0, PAGE_AVAILABLE = 1} page_state_t;
 

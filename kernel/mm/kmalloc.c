@@ -1,11 +1,10 @@
 /*
  * MikeOS: Kernel heap allocator, using K&R algorithm
  */
-#include <kmalloc.h>
 #include <common.h>
-#include <paging.h>
-#include <kheap.h>
-#include <common.h>
+#include <mm/kmalloc.h>
+#include <mm/paging.h>
+#include <mm/kheap.h>
 
 static error_code_t increase_heap_size(uint32_t units);
 

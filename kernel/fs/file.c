@@ -1,8 +1,8 @@
-#include <file.h>
+#include <fs/file.h>
 #include <error_codes.h>
-#include <string.h>
-#include <kmalloc.h>
-#include <memory.h>
+#include <libc/string.h>
+#include <mm/kmalloc.h>
+#include <libc/memory.h>
 
 static char* possible_modes[] = {"r", "rb", "w", "wb", "a", "ab", "r+", "rb+", "r+b",
                                  "w+", "wb+", "w+b", "a+", "ab+", "a+b"};

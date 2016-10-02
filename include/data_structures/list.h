@@ -1,7 +1,7 @@
 #ifndef MIKE_OS_LIST_H
 #define MIKE_OS_LIST_H
 
-#include "common.h"
+#include <common.h>
 
 typedef struct node node_t;
 typedef struct list_head

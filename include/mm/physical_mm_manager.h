@@ -1,9 +1,9 @@
 #ifndef MIKE_OS_PHYSICAL_MM_MANAGER_H
 #define MIKE_OS_PHYSICAL_MM_MANAGER_H
 
-#include "error_codes.h"
-#include "common.h"
-#include "multiboot_info.h"
+#include <error_codes.h>
+#include <common.h>
+#include <multiboot_info.h>
 
 /* Function: phy_memory_manager_init
  * ------------------

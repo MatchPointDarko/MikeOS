@@ -1,7 +1,7 @@
 #ifndef MIKE_OS_FILE_H
 #define MIKE_OS_FILE_H
 
-#include <vfs.h>
+#include <fs/vfs.h>
 #include <common.h>
 
 file_t* file_open(const char* path, const char* mode);

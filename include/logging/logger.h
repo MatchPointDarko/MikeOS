@@ -1,7 +1,7 @@
 #ifndef MIKE_OS_LOGGER_H
 #define MIKE_OS_LOGGER_H
 
-#include "stdarg.h"
+#include <libc/stdarg.h>
 
 typedef enum log_type {LOG_INFO, LOG_WARNING,
                        LOG_ERROR, LOG_DEBUG} log_type_t;

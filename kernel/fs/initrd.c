@@ -1,11 +1,11 @@
 /*
  * MikeOS: Initial ramdisk(a very simple ram file system)
  */
-#include <kmalloc.h>
-#include <memory.h>
-#include <list.h>
-#include <vfs.h>
-#include <string.h>
+#include <mm/kmalloc.h>
+#include <libc/memory.h>
+#include <data_structures/list.h>
+#include <fs/vfs.h>
+#include <libc/string.h>
 
 typedef struct initrd_inode
 {
