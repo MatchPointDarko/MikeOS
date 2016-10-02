@@ -2,10 +2,10 @@
  * MikeOS: IDT Initializing.
  */
 
-#include "port_io.h"
-#include "logger.h"
-#include "keyboard_driver.h"
-#include "idt.h"
+#include <port_io.h>
+#include <logger.h>
+#include <keyboard_driver.h>
+#include <idt.h>
 
 #define IDT_SIZE 256
 #define PIC_1_CTRL 0x20
@@ -31,7 +31,7 @@ struct idt_pointer
 struct idt_entry idt_table[IDT_SIZE];
 struct idt_pointer idt_ptr;
 
-void load_idt_entry(char isr_number, unsigned long base, short int selector, char flags)
+void load_idt_entry(unsigned char isr_number, unsigned long base, short int selector, char flags)
 {
 	idt_table[isr_number].offset_lowerbits = base & 0xFFFF;
 	idt_table[isr_number].offset_higherbits = (base >> 16) & 0xFFFF;

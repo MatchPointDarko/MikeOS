@@ -2,13 +2,15 @@
  * MikeOS: VGA Driver.
  * TODO: VGA module needs refactoring ASAP, ugly, and really really stupid.
  */
-#include "vga.h"
-#include "common.h"
+#include <vga.h>
+#include <common.h>
+#include <kheap.h>
 
 #define SCREEN_COLS 80
 #define SCREEN_ROWS 25
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof(arr[0]))
 #define VGA_WORD_TO_CHAR(word) ((unsigned char)(word >> 8))
+#define VGA_PHYSICAL_ADDRESS (0xb8000)
 
 static void tab_handler();
 static void newline_handler();
@@ -17,12 +19,12 @@ static void vga_scroll();
 
 typedef struct
 {
-	char* const vga_buffer;
+	char* vga_buffer;
 	color_t color;
 	uint32_t x, y;
 } vga_state_t;
 
-vga_state_t vga_state = {(char* const)0xb8000,
+vga_state_t vga_state = {(char*)VGA_PHYSICAL_ADDRESS,
 						 VGA_DEFAULT_COLOR,
 						 0, 0};
 
@@ -44,7 +46,7 @@ static unsigned int get_special_character_index(char c)
 
 static inline char* get_address_by_location(unsigned int x, unsigned int y)
 {
-	return (char*)(vga_state.vga_buffer + ((x * 2) + (y * SCREEN_COLS * 2)));
+	return vga_state.vga_buffer + ((x * 2) + (y * SCREEN_COLS * 2));
 }
 
 static inline int y_reached_limit()
@@ -168,4 +170,11 @@ void set_terminal_color(color_t color)
 	{
 		vga_state.color = color;
 	}
+}
+
+void vga_init()
+{
+	uint32_t number_of_pages = 2;
+	char* vga_buffer = map_physical_to_kheap(VGA_PHYSICAL_ADDRESS, 2);
+	vga_state.vga_buffer = vga_buffer;
 }

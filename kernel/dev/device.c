@@ -2,8 +2,8 @@
  * MikeOS: Device manager.
  */
 
-#include "common.h"
-#include "device.h"
+#include <common.h>
+#include <device.h>
 
 static block_device_t* devices_ptrs[MAX_DEVICES] = {NULL};
 static unsigned long registered_devices = 0;

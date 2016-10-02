@@ -3,25 +3,29 @@
  *
  */
 
-#include "gdt.h"
-#include "idt.h"
-#include "kmalloc.h"
-#include "vga.h"
-#include "ata.h"
-#include "port_io.h"
-#include "stdio.h"
-#include "keyboard_driver.h"
-#include "multiboot_info.h"
-#include "physical_mm_manager.h"
-#include "paging.h"
-#include "common.h"
-#include "logger.h"
-#include "vfs.h"
-#include "memory.h"
-#include "panic.h"
-#include "list.h"
-#include "irq.h"
-#include "kheap.h"
+#include <gdt.h>
+#include <idt.h>
+#include <kmalloc.h>
+#include <vga.h>
+#include <ata.h>
+#include <port_io.h>
+#include <stdio.h>
+#include <keyboard_driver.h>
+#include <multiboot_info.h>
+#include <physical_mm_manager.h>
+#include <virtual_mm_manager.h>
+#include <userspace_manager.h>
+#include <paging.h>
+#include <common.h>
+#include <logger.h>
+#include <vfs.h>
+#include <memory.h>
+#include <panic.h>
+#include <list.h>
+#include <irq.h>
+#include <kheap.h>
+#include <file.h>
+#include <syscall.h>
 
 /*
  * Booted from harddisk, probably already installed.
@@ -55,6 +59,27 @@ static inline void make_initrd_fs(struct multiboot_info* info, file_system_t* fs
     fs->partition_end_offset = ((multiboot_module_t*)info->mods_addr)->mod_end;
     fs->fs_specific = fs->partition_end_offset - fs->partition_begin_offset;
     fs->device = NULL;
+
+    if(register_ramdisk(fs->partition_begin_offset, fs->partition_end_offset)
+                != SUCCESS)
+    {
+        log_print(LOG_ERROR, "Couldn't register the ramdisk"
+                             "to the physical memory manager");
+        kernel_panic();
+    }
+
+    void* virtual_address = NULL;
+    uint32_t num_pages = (fs->partition_end_offset - fs->partition_begin_offset) / PAGE_SIZE;
+    virtual_address = map_physical_to_kheap(fs->partition_begin_offset, num_pages);
+
+    if(!virtual_address)
+    {
+        log_print(LOG_ERROR, "Couldn't register the ramdisk to the kheap");
+        kernel_panic();
+    }
+
+    fs->partition_begin_offset = (uint32_t)virtual_address;
+    fs->partition_end_offset = fs->partition_begin_offset + num_pages * PAGE_SIZE;
 }
 
 void kmain(struct multiboot_info* info)
@@ -71,6 +96,9 @@ void kmain(struct multiboot_info* info)
     log_print(LOG_INFO, "Initializing kernel heap");
     kheap_init();
 
+    log_print(LOG_INFO, "Initializing VGA to its virtual memory form");
+    vga_init();
+
     log_print(LOG_INFO, "Initializing IDT");
     idt_init();
 
@@ -82,6 +110,7 @@ void kmain(struct multiboot_info* info)
 
     log_print(LOG_INFO, "Initializing ATA driver");
     ata_init();
+
     log_print(LOG_INFO, "Initializing Virtual file system");
     vfs_init();
 
@@ -98,13 +127,14 @@ void kmain(struct multiboot_info* info)
         kernel_panic();
     }
 
-    if(register_ramdisk(fs.partition_begin_offset, fs.partition_end_offset)
-                != SUCCESS)
-    {
-        log_print(LOG_ERROR, "Couldn't register the ramdisk"
-                             "to the physical memory manager");
-        kernel_panic();
-    }
+    log_print(LOG_INFO, "Initializing system-calls");
+    system_calls_init();
+
+    log_print(LOG_INFO, "Initializing userspace");
+    userspace_init();
+    void load_task(const char* path);
+
+    load_task("sh");
 
     HLT();
 }

@@ -2,14 +2,14 @@
  * MikeOS: Virtual File System Implementation.
  */
 
-#include "common.h"
-#include "panic.h"
-#include "kmalloc.h"
-#include "memory.h"
-#include "string.h"
-#include "vfs.h"
-#include "list.h"
-#include "logger.h"
+#include <common.h>
+#include <panic.h>
+#include <kmalloc.h>
+#include <memory.h>
+#include <string.h>
+#include <vfs.h>
+#include <list.h>
+#include <logger.h>
 
 typedef struct mount_point
 {
@@ -192,10 +192,12 @@ clean_up:
     free_list(&tree_nodes);
     if(current != NULL)
     {
-        return current->mounted_fs->open(current->mounted_fs, (char *) path);
+        return current->mounted_fs->open(current->mounted_fs, path);
     }
     else
+    {
         return NULL;
+    }
 }
 
 void vfs_unmount(file_system_t* fs)

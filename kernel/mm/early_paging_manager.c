@@ -3,15 +3,8 @@
  * TODO: Kernel virtual memory manager needs refactoring asap!
  */
 
-#include "common.h"
-#include "memory.h"
-#include "bitmap_manipulation.h"
-#include "physical_mm_manager.h"
-#include "common_constants.h"
-#include "paging.h"
-
-#define KERNEL_PGD_ENTRY_INDEX 768
-#define NUM_KERNEL_PAGE_TABLES (2)
+#include <common.h>
+#include <paging.h>
 
 page_table_ptr_t init_page_directory[PAGE_DIRECTORY_SIZE]
 __attribute__((aligned(PAGE_SIZE))) __attribute__((section(".tables"))) = {0};

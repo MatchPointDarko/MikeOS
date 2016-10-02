@@ -3,8 +3,8 @@
  *         mainly helps the memory managers bitmaps.
  */
 
-#include "memory.h"
-#include "bitmap_manipulation.h"
+#include <memory.h>
+#include <bitmap_manipulation.h>
 
 unsigned long bit_index_to_byte_index(unsigned long bit_index)
 {

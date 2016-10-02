@@ -1,81 +1,117 @@
 /*
- * MikeOS: Task implementation. (similar to linux's task_struct)
+ * MikeOS: Task implementation. (A task is another name for a thread)
  */
-#include "gdt.h"
-#include "common.h"
+#include <kmalloc.h>
+#include <virtual_mm_manager.h>
+#include <userspace_manager.h>
+#include <common.h>
+#include <memory.h>
+#include <string.h>
+#include <kheap.h>
 
-#define USER_DATA_SEGMENT_ENTRY (0x3)
-#define USER_CODE_SEGMENT_ENTRY (0x4)
-#define TSS_SEGMENT_ENTRY (0x5)
+#define KERNEL_STACK_SIZE (PAGE_SIZE)
 
-#define PUSH_USER_SPACE_DATA_SEGMENT
-#define PUSH_USER_SPACE_CODE_SEGMENT
-
-typedef struct tss_struct
+typedef struct context
 {
-    unsigned long prev_tss;
-    unsigned long esp0;
-    unsigned long ss0;        // The stack segment to load when we change to kernel mode.
-    unsigned long esp1;       // everything below here is unusued now..
-    unsigned long ss1;
-    unsigned long esp2;
-    unsigned long ss2;
-    unsigned long cr3;
-    unsigned long eip;
-    unsigned long eflags;
-    unsigned long eax;
-    unsigned long ecx;
-    unsigned long edx;
-    unsigned long ebx;
-    unsigned long esp;
-    unsigned long ebp;
-    unsigned long esi;
-    unsigned long edi;
-    unsigned long es;
-    unsigned long cs;
-    unsigned long ss;
-    unsigned long ds;
-    unsigned long fs;
-    unsigned long gs;
-    unsigned long ldt;
-    unsigned short trap;
-    unsigned short iomap_base;
-} tss_struct_t;
+    uint32_t edi;
+    uint32_t esi;
+    uint32_t ebp;
+    uint32_t esp;
+    uint32_t ebx;
+    uint32_t edx;
+    uint32_t ecx;
+    uint32_t eax;
+} context_t;
 
 typedef struct task
 {
-    uint32_t pid;
-    void* stack_begin;
-    void* txt_begin;
-    void* data_begin;
-    tss_struct_t arch_task_info;
+    virtual_address_space_t* vmm;
+    context_t context;
+    uint8_t name[20];
+    uint32_t kernel_ss;
+    uint32_t stack_begin;
+    uint32_t stack_end;
+
+    uint32_t text_begin;
+    uint32_t text_end;
+
+    uint32_t data_begin;
+    uint32_t data_end;
+
+    void* kernel_stack;
 } task_t;
 
-/* Load all user space entries to GDT.
- * NOTE: calls 'set_gdt_gate' which is relocated at 'init' section,
- * i.e. a physical address. TODO: maybe add an offset of virtual addr to
- * the function pointer, or rely on identity mapping.
- */
-
-static void load_task_state_segment()
+task_t* alloc_task(const char* name)
 {
-    //TSS
-    set_gdt_gate(TSS_SEGMENT_ENTRY, 0, 0xFFFFFFFF, 0x9A, 0xCF);
-    asm("mov eax, 0x5");
-    asm("ltr [eax]");
+    if(name == NULL)
+    {
+        return NULL;
+    }
+
+    task_t* task = kmalloc(sizeof(task_t));
+
+    if(task == NULL)
+    {
+        return NULL;
+    }
+
+    task->vmm = alloc_virtual_address_space();
+
+    if(task->vmm == NULL)
+    {
+        kfree(task);
+        return NULL;
+    }
+
+    memcpy(task->name, (char *)name, strlen(name));
+
+    task->kernel_ss = 0x10;
+    task->kernel_stack = alloc_kheap_pages(1);
+
+    if(task->kernel_stack == NULL)
+    {
+        free_virtual_address_space(task->vmm);
+        kfree(task);
+
+        return NULL;
+    }
+
+    return task;
 }
 
-void load_user_space_entries()
+error_code_t free_task(task_t* task)
 {
-    //Ring 3 code segment
-    set_gdt_gate(USER_CODE_SEGMENT_ENTRY, 0, 0xFFFFFFFF, 0xF2, 0xCF);
+    if(task == NULL)
+    {
+        return INVALID_ARGUMENT;
+    }
 
-    //Ring 3 data segment
-    set_gdt_gate(USER_DATA_SEGMENT_ENTRY, 0, 0xFFFFFFFF, 0xFA, 0xCF);
-    load_task_state_segment();
+    if(free_virtual_address_space(task->vmm) != SUCCESS)
+    {
+        return FAILURE;
+    }
+
+    free_kheap_pages(task->kernel_stack, 1);
+
+    kfree(task);
+
+    return SUCCESS;
 }
 
-void goto_userspace(void* user_space_address)
+task_t* load_task(const char* path)
 {
-    //TODO..
+    task_t* task = alloc_task(path);
+
+    switch_virtual_address_space(task->vmm);
+
+    set_kernel_stack(((uint32_t)task->kernel_stack) + KERNEL_STACK_SIZE);
+
+    /*
+    if(load_elf(task) != SUCCESS)
+    {
+        return NULL;
+    }
+    */
+
+    //jmp_to_userspace(task->text_begin, task->stack_end);
 }

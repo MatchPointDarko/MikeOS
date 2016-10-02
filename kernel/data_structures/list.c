@@ -1,5 +1,9 @@
-#include "list.h"
-#include "kmalloc.h"
+/*
+ * MikeOS: A list implemntation.
+ */
+
+#include <list.h>
+#include <kmalloc.h>
 
 typedef struct node
 {
@@ -15,7 +19,6 @@ bool_t initialize_list(list_t* list_head)
     }
 
     list_head->head = NULL;
-    list_head->head->next = NULL;
 
     list_head->iter_node = list_head->head;
 }

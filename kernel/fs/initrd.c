@@ -1,11 +1,11 @@
 /*
  * MikeOS: Initial ramdisk(a very simple ram file system)
  */
-#include "kmalloc.h"
-#include "memory.h"
-#include "list.h"
-#include "vfs.h"
-#include "string.h"
+#include <kmalloc.h>
+#include <memory.h>
+#include <list.h>
+#include <vfs.h>
+#include <string.h>
 
 typedef struct initrd_inode
 {
@@ -17,7 +17,7 @@ typedef struct initrd_inode
 static initrd_inode_t* search_inode_table(initrd_inode_t* inode_table_start,
                                           uint32_t number_of_inodes, char* name);
 
-static initrd_inode_t* initrd_search_inode_table(initrd_inode_t* inode_table_start, uint32_t number_of_inodes, char* name)
+static initrd_inode_t* initrd_search_inode_table(initrd_inode_t* inode_table_start, uint32_t number_of_inodes, const char* name)
 {
     for(int i = 0; i < number_of_inodes; i++)
     {
@@ -29,11 +29,17 @@ static initrd_inode_t* initrd_search_inode_table(initrd_inode_t* inode_table_sta
     return NULL;
 }
 
-fs_node_t* initrd_open(file_system_t* fs, char* path)
+fs_node_t* initrd_open(file_system_t* fs, const char* path)
 {
     if(fs == NULL || path == NULL)
     {
         return NULL;
+    }
+
+    //Ignore the '/' if given.
+    if(path[0] == '/')
+    {
+        path++;
     }
 
     //There are no directories in initrd, lets just get the file.

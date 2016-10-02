@@ -1,133 +1,102 @@
 /*
  * MikeOS: Kernel heap allocator, using K&R algorithm
  */
-#include "kmalloc.h"
-#include "common.h"
-#include "paging.h"
-#include "kheap.h"
+#include <kmalloc.h>
+#include <common.h>
+#include <paging.h>
+#include <kheap.h>
+#include <common.h>
 
-#include "physical_mm_manager.h"
-
-#define PAGE_SIZE 4096
-
-typedef long align_t;
+static error_code_t increase_heap_size(uint32_t units);
 
 typedef struct block_header
 {
     struct block_header* next_free_block;
-    unsigned long block_size;
+    uint32_t block_size;
 } block_header_t;
 
-static block_header_t base = {0};
-static block_header_t* free_blocks_list = NULL;
-
-static void* increase_heap_size()
+typedef struct block_list_head
 {
-   block_header_t* insert = NULL;
-   void* free_page = alloc_kheap_pages(1);
+   block_header_t* free_blocks;
 
-   if(free_page == NULL)
-   {
-      return NULL;
-   }
+} block_list_head_t;
 
-   insert = free_page;
-   insert->block_size = (PAGE_SIZE / sizeof(block_header_t)) - 1;
-   insert->next_free_block = NULL;
+static block_list_head_t blocks_info = {NULL};
 
-   if(free_blocks_list == &base)
-   {
-      free_blocks_list = insert;
-   }
-   else
-   {
-      kfree(insert + 1);
-   }
+static error_code_t increase_heap_size(uint32_t units)
+{
+    uint32_t num_pages = (units / PAGE_SIZE) + 1;
+    block_header_t* block = alloc_kheap_pages(num_pages);
 
-   return free_page;
+    if(block == NULL)
+    {
+       return FAILURE;
+    }
+
+    block->block_size = num_pages * PAGE_SIZE;
+    block->block_size = ((block->block_size + sizeof(block_header_t) - 1) / sizeof(block_header_t));
+    block->block_size--;
+
+    kfree(block + 1);
+
+    return SUCCESS;
 }
 
-void* kmalloc(size_t size)
-{
-   unsigned long nunits = ((size + sizeof(block_header_t) - 1) / sizeof(block_header_t));
-
-   if(size > PAGE_SIZE - sizeof(block_header_t))
-   {
-      //Currently doesn't support size that extends page size.
-      return NULL;
-   }
-   //No free list exists, base points to itself, size is 0.
-   if(free_blocks_list == NULL)
-   {
-      free_blocks_list = &base;
-      free_blocks_list->next_free_block = NULL;
-      free_blocks_list->block_size = 0;
-   }
-   void* address = NULL;
-   block_header_t* prev = NULL;
-   bool_t searching_for_block = true;
-
-   for(block_header_t* current = free_blocks_list;
-       searching_for_block;
-       prev = current, current = current->next_free_block)
-   {
-      if(current->block_size >= nunits)
-      {
-         if(current->block_size == nunits)
-         {
-            //Bullseye
-            if(current == NULL)
-            {
-               //Head of the list
-               free_blocks_list = current->next_free_block;
-            }
-            else
-            {
-               prev->next_free_block = current->next_free_block;
-            }
-            address = (void*)(current + 1);
-         }
-         else
-         {
-            current->block_size -= nunits;
-            current += current->block_size;
-            current->block_size = nunits;
-            address = (void*)(current + 1);
-         }
-
-         searching_for_block = false;
-      }
-
-      else if(current->next_free_block == NULL)
-      {
-         block_header_t* tmp = NULL;
-         if((tmp = increase_heap_size()) != NULL)
-         {
-            current->next_free_block = tmp;
-         }
-         else
-         {
-             searching_for_block = false;
-         }
-      }
-   }
-
-   return address;
-}
-
-/*
- * Add the address to the end of the linked list.
- */
 void kfree(void* address)
 {
-   block_header_t* free_block = address;
-   free_block--;
+    block_header_t* block = address;
+    block--;
 
-   //Iterate until the last free block is found
-   block_header_t* it = free_blocks_list;
+    block_header_t** current = &blocks_info.free_blocks;
+    for(; *current != NULL; current = &(*current)->next_free_block);
 
-   for(; it->next_free_block != NULL; it = it->next_free_block)
-      ;
+    *current = block;
+    (*current)->next_free_block = NULL;
 
-   it->next_free_block = free_block;
+    //TODO: Merge blocks.
+}
+
+void* kmalloc(uint32_t size)
+{
+    uint32_t units = ((size + sizeof(block_header_t) - 1) / sizeof(block_header_t));
+    void* address = NULL;
+
+    for(block_header_t** current = &blocks_info.free_blocks;
+        ;
+        current = &(*current)->next_free_block)
+    {
+       if(*current == NULL)
+       {
+          //Allocate..
+          if(increase_heap_size(units) != SUCCESS)
+          {
+             break;
+          }
+
+          //Now current should point to a buffer.
+       }
+
+       if((*current)->block_size >= units)
+       {
+          block_header_t* free_block = NULL;
+          if((*current)->block_size > units)
+          {
+             free_block = ((*current) + (*current)->block_size) - units;
+             free_block--;
+             free_block->block_size = units;
+             free_block->next_free_block = NULL;
+             (*current)->block_size -= units;
+          }
+          else
+          {
+             free_block = *current;
+             *current = (*current)->next_free_block;
+          }
+
+          address = free_block + 1;
+          break;
+       }
+    }
+
+    return address;
 }

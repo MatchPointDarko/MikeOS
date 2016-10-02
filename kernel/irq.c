@@ -2,25 +2,17 @@
  * MikeOS: IRQ default handler, and irq redirection.
  */
 
-#include "port_io.h"
-#include "error_codes.h"
-#include "common.h"
-#include "idt.h"
-#include "logger.h"
-#include "irq.h"
+#include <port_io.h>
+#include <error_codes.h>
+#include <common.h>
+#include <idt.h>
+#include <logger.h>
+#include <irq.h>
 
 #define SLAVE_PIC_CMD (0xA0)
 #define MASTER_PIC_CMD (0x20)
 #define PIC_ACK (0x20)
 #define NUMBER_OF_IRQS (16)
-
-typedef struct regs
-{
-    uint32_t irq_number;
-    uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax;
-    uint32_t eip, cs, flags, user_esp, ss;
-
-} regs_t;
 
 extern void irq_0();
 extern void irq_1();
@@ -53,14 +45,14 @@ void irq_init()
     load_idt_entry(37, (unsigned long)irq_5, KERNEL_CODE_SEGMENT, 0x8e);
     load_idt_entry(38, (unsigned long)irq_6, KERNEL_CODE_SEGMENT, 0x8e);
     load_idt_entry(39, (unsigned long)irq_7, KERNEL_CODE_SEGMENT, 0x8e);
-    load_idt_entry(40, (unsigned long)irq_8, KERNEL_CODE_SEGMENT, 0x8e);
-    load_idt_entry(41, (unsigned long)irq_9, KERNEL_CODE_SEGMENT, 0x8e);
-    load_idt_entry(42, (unsigned long)irq_10, KERNEL_CODE_SEGMENT, 0x8e);
-    load_idt_entry(43, (unsigned long)irq_11, KERNEL_CODE_SEGMENT, 0x8e);
-    load_idt_entry(44, (unsigned long)irq_12, KERNEL_CODE_SEGMENT, 0x8e);
-    load_idt_entry(45, (unsigned long)irq_13, KERNEL_CODE_SEGMENT, 0x8e);
-    load_idt_entry(45, (unsigned long)irq_14, KERNEL_CODE_SEGMENT, 0x8e);
-    load_idt_entry(46, (unsigned long)irq_15, KERNEL_CODE_SEGMENT, 0x8e);
+    load_idt_entry(0x70, (unsigned long)irq_8, KERNEL_CODE_SEGMENT, 0x8e);
+    load_idt_entry(0x71, (unsigned long)irq_9, KERNEL_CODE_SEGMENT, 0x8e);
+    load_idt_entry(0x72, (unsigned long)irq_10, KERNEL_CODE_SEGMENT, 0x8e);
+    load_idt_entry(0x73, (unsigned long)irq_11, KERNEL_CODE_SEGMENT, 0x8e);
+    load_idt_entry(0x74, (unsigned long)irq_12, KERNEL_CODE_SEGMENT, 0x8e);
+    load_idt_entry(0x75, (unsigned long)irq_13, KERNEL_CODE_SEGMENT, 0x8e);
+    load_idt_entry(0x76, (unsigned long)irq_14, KERNEL_CODE_SEGMENT, 0x8e);
+    load_idt_entry(0x77, (unsigned long)irq_15, KERNEL_CODE_SEGMENT, 0x8e);
 }
 
 inline void irq_ack(uint32_t irq_number)

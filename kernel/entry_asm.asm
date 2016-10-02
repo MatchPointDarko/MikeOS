@@ -14,6 +14,8 @@ align 4
     dd 0x3 ;flags
     dd - (0x1BADB002 + 0x3) ;checksum. m+f+c should be zero
 
+extern printf
+
 section .init
 start:
     cli ;block interrupts
