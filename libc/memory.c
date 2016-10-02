@@ -2,7 +2,7 @@
  * MikeOS: Memory helper functions.
  */
 
-#include "memory.h"
+#include <memory.h>
 
 void memcpy(void* dst, void* src, unsigned int num)
 {

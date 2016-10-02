@@ -5,21 +5,21 @@
 
 typedef enum page_state { PAGE_UNAVAILABLE = 0, PAGE_AVAILABLE = 1} page_state_t;
 
-typedef uint32_t* page_table_ptr_t;
 typedef uint32_t* physical_page_ptr_t;
+typedef physical_page_ptr_t* page_table_ptr_t;
 typedef uint32_t* table_entry;
 
 /* entry bits */
 typedef enum
 {
     PRESENT = 1,
-    READ_WRITE,
-    USER,
-    WRITE_THROUGH,
-    CACHE_DISABLED,
-    ACCESSED,
-    DIRTY,
-    GLOBAL
+    READ_WRITE = 2,
+    USER = 4,
+    WRITE_THROUGH = 8,
+    CACHE_DISABLED = 16,
+    ACCESSED = 32,
+    DIRTY = 128,
+    GLOBAL = 256
 
 } attributes_t;
 
@@ -37,5 +37,8 @@ typedef enum
 
 #define ADDRESS_TO_DIRECTORY_ENTRY(address) ((uint32_t)address >> 22)
 #define ADDRESS_TO_PAGE_TABLE_ENTRY(address) ((uint32_t)address >> 12 & 0x03ff)
+
+#define NUM_KERNEL_PAGE_TABLES (2)
+#define KERNEL_PGD_ENTRY_INDEX (768)
 
 #endif

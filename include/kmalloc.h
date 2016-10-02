@@ -11,7 +11,7 @@
  *
  * returns: a pointer to the memory block requested.
  */
-void* kmalloc(size_t size);
+void* kmalloc(uint32_t size);
 
 /* Function: kfree.
  * ------------------
@@ -19,7 +19,7 @@ void* kmalloc(size_t size);
  *
  * address: the address to the memory block.
  *
- * NOTE: Does not yet assume the address is aligned and valid.
+ * NOTE: Assumes the address is aligned and valid.
  */
 void kfree(void* address);
 

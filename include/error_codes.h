@@ -7,8 +7,8 @@ typedef enum error_code
     FAILURE,
     NO_SUCH_FILE,
     NO_SUCH_DIRECTORY,
-    INVALID_ARGUMENT
-
+    INVALID_ARGUMENT,
+    NOT_ENOUGH_RAM
 } error_code_t;
 
 #endif //MIKE_OS_ERROR_CODES_H

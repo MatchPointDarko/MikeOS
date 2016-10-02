@@ -2,7 +2,8 @@
  * MikeOS: Helper functions for strings.
  */
 
-#include "common.h"
+#include <common.h>
+#include <string.h>
 
 char* strcpy(char* dest, const char* source)
 {
@@ -14,6 +15,14 @@ char* strncpy(char* dest, const char* source, int num)
 {
     while((*dest++ = *source++) != '\0' && num-- > 0);
     return dest;
+}
+
+int strncmp(char* str1, char* str2, uint32_t max_length)
+{
+    str1[max_length - 1] = '\0';
+    str2[max_length - 1] = '\0';
+
+    return strcmp((const char*)str1, (const char*)str2);
 }
 
 int strcmp(const char* str1, const char* str2)
@@ -179,7 +188,7 @@ char* strstr(const char* haystack, const char* needle)
     return (char *)substr;
 }
 
-uint32_t strlen(char* str)
+uint32_t strlen(const char* str)
 {
     uint32_t counter = 0;
     while(*str++ != '\0')

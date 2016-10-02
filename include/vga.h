@@ -25,5 +25,6 @@ void vga_flush();
 void vga_putc(const char c);
 void vga_print(const char* str);
 void set_terminal_color(color_t color);
+void vga_init();
 
 #endif

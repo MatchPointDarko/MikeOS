@@ -41,23 +41,29 @@ typedef struct file_system
     uint32_t partition_end_offset;
     uint32_t (*read) (struct fs_node* node, uint32_t offset, uint32_t length, void* buffer);
     uint32_t (*write) (struct fs_node* node, uint32_t offset, uint32_t length, void* buffer);
-    fs_node_t* (*open) (struct file_system* fs, char* path);
-    void(*close) (struct fs_node* node);
-    struct fs_node* (*readdir) (struct fs_node*);
-    struct fs_node* (*finddir) (struct fs_node*, const char* path);
+    fs_node_t* (*open) (struct file_system* fs, const char* path);
+    void (*close) (struct fs_node* node);
+    struct fs_node* (*readdir) (struct fs_node*, const char* path);
 
 } file_system_t;
 
 typedef struct file
 {
-    uint32_t flags;
+    //TODO: uint32_t flags;
     uint32_t mode;
     uint32_t offset;
-    //inode_t* inode;
+    fs_node_t* inode;
 } file_t;
 
-typedef enum file_modes
-{ READ = 1, WRITE = 2, EXECUTE = 4} file_modes_t;
+typedef enum file_mode
+{
+    READ = 1,
+    WRITE = 2,
+    APPEND = 4,
+    CREATE_FILE = 8,
+    TRUNCATE_TO_ZERO = 16
+} file_mode_t;
+
 
 enum fs_node_types
 {
@@ -78,5 +84,6 @@ error_code_t vfs_mount(const char* path, file_system_t* fs);
 uint32_t vfs_read(fs_node_t* node, uint32_t offset, uint32_t length, void* buffer);
 uint32_t vfs_write(fs_node_t* node, uint32_t offset, uint32_t length, void* buffer);
 fs_node_t* vfs_open(const char* path);
+void vfs_close(fs_node_t* node);
 
 #endif //MIKE_OS_VFS_H
