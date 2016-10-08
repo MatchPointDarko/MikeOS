@@ -4,7 +4,14 @@
 
 #include <libc/stdio.h>
 #include <logging/logger.h>
-#include <common.h>
+#include <gdt.h>
+
+#define GDT__ON_BIT (1 << 4)
+#define GDT__PRESENT (1 << 7 | GDT__ON_BIT)
+#define GDT__RING3 (3 << 5 | GDT__ON_BIT)
+#define GDT__RING0 (0 | GDT__ON_BIT)
+#define GDT__EXECUTABLE (1 << 3 | GDT__ON_BIT)
+#define GDT__READABLE_WRITEABLE (1 << 1 | GDT__ON_BIT)
 
 struct gdt_entry
 {
@@ -51,14 +58,15 @@ __attribute__((section(".init"))) void load_gdt()
 	gp.limit = (sizeof(struct gdt_entry) * 6) - 1;
 	gp.base = (unsigned int)early_gdt;
 
-	//NULL Descriptor, legacy
+	//NULL Descriptor
 	early_set_gdt_gate(0, 0, 0, 0, 0);
 
 	//Code
-	early_set_gdt_gate(1, 0, 0xFFFFFFFF, 0x9A, 0xCF);
+	early_set_gdt_gate(1, 0, 0xFFFFFFFF,
+					   GDT__PRESENT | GDT__RING0 | GDT__READABLE_WRITEABLE | GDT__EXECUTABLE, 0xCF);
 
 	//Data
-	early_set_gdt_gate(2, 0, 0xFFFFFFFF, 0x92, 0xCF);
+	early_set_gdt_gate(2, 0, 0xFFFFFFFF, GDT__PRESENT | GDT__RING0 | GDT__READABLE_WRITEABLE, 0xCF);
 
 	asm("lgdt [gp]");
 	asm("mov ax, 0x10");
@@ -86,8 +94,8 @@ void remap_gdt()
 	log_print(LOG_DEBUG, "Remapped GDT successfuly!");
 }
 
-void set_gdt_gate(int num, unsigned long base, unsigned long limit,
-				  unsigned char access, unsigned char gran)
+void set_gdt_gate(uint32_t num, uint32_t base, uint32_t limit,
+				  uint8_t access, uint8_t gran)
 {
 	gdt[num].base_low = (base & 0xFFFF);
 	gdt[num].base_middle = (base >> 16) & 0xFF;

@@ -52,7 +52,7 @@ static void load_task_state_segment()
     set_gdt_gate(TSS_SEGMENT_ENTRY, (uint32_t)&task_state,
                  ((uint32_t)&task_state) + sizeof(tss_struct_t) - 1, 0xe9, 0x00);
 
-    //task_state.ss0 = 0x10;
+    task_state.ss0 = 0x10;
     asm("mov ax, 0x28");
     asm("ltr ax");
 }
@@ -60,10 +60,12 @@ static void load_task_state_segment()
 static void load_ring3_segments()
 {
     //Ring 3 code segment
-    set_gdt_gate(RING3_CODE_SEGMENT_ENTRY, 0, 0xFFFFFFFF, RING3_CODE_FLAG, 0xCF);
+    set_gdt_gate(RING3_CODE_SEGMENT_ENTRY, 0, 0xFFFFFFFF,
+                 GDT__PRESENT | GDT__RING3 | GDT__READABLE_WRITEABLE | GDT__EXECUTABLE, 0xCF);
 
     //Ring 3 data segment
-    set_gdt_gate(RING3_DATA_SEGMENT_ENTRY, 0, 0xFFFFFFFF, RING3_DATA_FLAG, 0xCF);
+    set_gdt_gate(RING3_DATA_SEGMENT_ENTRY, 0, 0xFFFFFFFF,
+                 GDT__PRESENT | GDT__RING3 | GDT__READABLE_WRITEABLE, 0xCF);
 
     load_task_state_segment();
 }

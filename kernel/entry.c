@@ -9,6 +9,7 @@
 #include <mm/physical_mm_manager.h>
 #include <mm/virtual_mm_manager.h>
 #include <multitask/userspace_manager.h>
+#include <multitask/task.h>
 #include <drivers/vga/vga.h>
 #include <drivers/ata/ata.h>
 #include <port_io/port_io.h>
@@ -70,7 +71,7 @@ static inline void make_initrd_fs(struct multiboot_info* info, file_system_t* fs
 
     void* virtual_address = NULL;
     uint32_t num_pages = (fs->partition_end_offset - fs->partition_begin_offset) / PAGE_SIZE;
-    virtual_address = map_physical_to_kheap(fs->partition_begin_offset, num_pages);
+    virtual_address = map_physical_address_to_kheap(fs->partition_begin_offset, num_pages);
 
     if(!virtual_address)
     {
@@ -132,9 +133,6 @@ void kmain(struct multiboot_info* info)
 
     log_print(LOG_INFO, "Initializing userspace");
     userspace_init();
-    void load_task(const char* path);
-
-    load_task("sh");
 
     HLT();
 }

@@ -147,10 +147,12 @@ void* alloc_kheap_pages(uint32_t num_pages)
     return address;
 }
 
-void* map_physical_to_kheap(uint32_t physical_address, uint32_t num_pages)
+void* map_physical_address_to_kheap(uint32_t physical_address, uint32_t num_pages)
 {
     void* free_virtual_address = get_free_continuous_blocks_address(num_pages);
     physical_page_ptr_t* base_page_table = (physical_page_ptr_t*)KHEAP_RECURSIVE_ADDRESS;
+
+    register_physical_pages(physical_address, num_pages);
 
     for(int i = ADDRESS_TO_PAGE_TABLE_ENTRY(free_virtual_address);
         i < ADDRESS_TO_PAGE_TABLE_ENTRY(free_virtual_address) + num_pages;

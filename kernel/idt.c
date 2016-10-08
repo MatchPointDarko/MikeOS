@@ -7,6 +7,7 @@
 #include <drivers/keyboard/keyboard_driver.h>
 #include <idt.h>
 
+
 #define IDT_SIZE 256
 #define PIC_1_CTRL 0x20
 #define PIC_2_CTRL 0xA0

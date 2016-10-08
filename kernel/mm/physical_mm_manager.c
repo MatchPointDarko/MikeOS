@@ -180,12 +180,12 @@ error_code_t free_physical_page(uint32_t page_address)
     return error_code;
 }
 
-error_code_t register_ramdisk(uint32_t start_address, uint32_t end_address)
+error_code_t register_physical_pages(uint32_t start_address, uint32_t end_address)
 {
     return change_pages_state(start_address, end_address, PAGE_UNAVAILABLE);
 }
 
-error_code_t unregister_ramdisk(uint32_t start_address, uint32_t end_address)
+error_code_t unregister_physical_pages(uint32_t start_address, uint32_t end_address)
 {
     return change_pages_state(start_address, end_address, PAGE_AVAILABLE);
 }

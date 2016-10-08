@@ -101,7 +101,7 @@ static void default_handler(char c)
 
     if(x_reached_limit())
     {
-       newline_handler();
+       	newline_handler();
     }
 }
 
@@ -138,22 +138,10 @@ static void vga_scroll()
 {
     //Find the second line
     uint16_t* rows_iter = (uint16_t*)vga_state.vga_buffer;
+
     while(VGA_WORD_TO_CHAR(*rows_iter++) != '\n');
 
-    //(SCREEN_ROWS - 1) lines
-    uint32_t rows_passed = 0;
-    uint16_t* buffer_iter = (uint16_t*)vga_state.vga_buffer;
-    while(rows_passed != (SCREEN_ROWS - 1))
-    {
-       *buffer_iter = *rows_iter;
-       if(VGA_WORD_TO_CHAR(*buffer_iter) == '\n')
-       {
-           rows_passed++;
-       }
-
-        buffer_iter++;
-        rows_iter++;
-    }
+    memcpy(vga_state.vga_buffer, rows_iter, SCREEN_COLS * (SCREEN_ROWS - 1) * 2);
 }
 
 void vga_print(const char* str)
@@ -175,6 +163,6 @@ void set_terminal_color(color_t color)
 void vga_init()
 {
 	uint32_t number_of_pages = 2;
-	char* vga_buffer = map_physical_to_kheap(VGA_PHYSICAL_ADDRESS, 2);
+	char* vga_buffer = map_physical_address_to_kheap(VGA_PHYSICAL_ADDRESS, 2);
 	vga_state.vga_buffer = vga_buffer;
 }

@@ -6,6 +6,7 @@
 #include <error_codes.h>
 #include <common.h>
 #include <idt.h>
+#include <gdt.h>
 #include <logging/logger.h>
 #include <irq.h>
 
@@ -37,22 +38,22 @@ static irq_handler_t irq_handlers[NUMBER_OF_IRQS] = {NULL, };
 
 void irq_init()
 {
-    load_idt_entry(32, (unsigned long)irq_0, KERNEL_CODE_SEGMENT, 0x8e);
-    load_idt_entry(33, (unsigned long)irq_1, KERNEL_CODE_SEGMENT, 0x8e);
-    load_idt_entry(34, (unsigned long)irq_2, KERNEL_CODE_SEGMENT, 0x8e);
-    load_idt_entry(35, (unsigned long)irq_3, KERNEL_CODE_SEGMENT, 0x8e);
-    load_idt_entry(36, (unsigned long)irq_4, KERNEL_CODE_SEGMENT, 0x8e);
-    load_idt_entry(37, (unsigned long)irq_5, KERNEL_CODE_SEGMENT, 0x8e);
-    load_idt_entry(38, (unsigned long)irq_6, KERNEL_CODE_SEGMENT, 0x8e);
-    load_idt_entry(39, (unsigned long)irq_7, KERNEL_CODE_SEGMENT, 0x8e);
-    load_idt_entry(0x70, (unsigned long)irq_8, KERNEL_CODE_SEGMENT, 0x8e);
-    load_idt_entry(0x71, (unsigned long)irq_9, KERNEL_CODE_SEGMENT, 0x8e);
-    load_idt_entry(0x72, (unsigned long)irq_10, KERNEL_CODE_SEGMENT, 0x8e);
-    load_idt_entry(0x73, (unsigned long)irq_11, KERNEL_CODE_SEGMENT, 0x8e);
-    load_idt_entry(0x74, (unsigned long)irq_12, KERNEL_CODE_SEGMENT, 0x8e);
-    load_idt_entry(0x75, (unsigned long)irq_13, KERNEL_CODE_SEGMENT, 0x8e);
-    load_idt_entry(0x76, (unsigned long)irq_14, KERNEL_CODE_SEGMENT, 0x8e);
-    load_idt_entry(0x77, (unsigned long)irq_15, KERNEL_CODE_SEGMENT, 0x8e);
+    load_idt_entry(32, (unsigned long)irq_0, KERNEL_CODE_SEGMENT, IDT__PRESENT | IDT__RING0 | IDT__INTERRUPT_GATE);
+    load_idt_entry(33, (unsigned long)irq_1, KERNEL_CODE_SEGMENT, IDT__PRESENT | IDT__RING0 | IDT__INTERRUPT_GATE);
+    load_idt_entry(34, (unsigned long)irq_2, KERNEL_CODE_SEGMENT, IDT__PRESENT | IDT__RING0 | IDT__INTERRUPT_GATE);
+    load_idt_entry(35, (unsigned long)irq_3, KERNEL_CODE_SEGMENT, IDT__PRESENT | IDT__RING0 | IDT__INTERRUPT_GATE);
+    load_idt_entry(36, (unsigned long)irq_4, KERNEL_CODE_SEGMENT, IDT__PRESENT | IDT__RING0 | IDT__INTERRUPT_GATE);
+    load_idt_entry(37, (unsigned long)irq_5, KERNEL_CODE_SEGMENT, IDT__PRESENT | IDT__RING0 | IDT__INTERRUPT_GATE);
+    load_idt_entry(38, (unsigned long)irq_6, KERNEL_CODE_SEGMENT, IDT__PRESENT | IDT__RING0 | IDT__INTERRUPT_GATE);
+    load_idt_entry(39, (unsigned long)irq_7, KERNEL_CODE_SEGMENT, IDT__PRESENT | IDT__RING0 | IDT__INTERRUPT_GATE);
+    load_idt_entry(0x70, (unsigned long)irq_8, KERNEL_CODE_SEGMENT, IDT__PRESENT | IDT__RING0 | IDT__INTERRUPT_GATE);
+    load_idt_entry(0x71, (unsigned long)irq_9, KERNEL_CODE_SEGMENT, IDT__PRESENT | IDT__RING0 | IDT__INTERRUPT_GATE);
+    load_idt_entry(0x72, (unsigned long)irq_10, KERNEL_CODE_SEGMENT, IDT__PRESENT | IDT__RING0 | IDT__INTERRUPT_GATE);
+    load_idt_entry(0x73, (unsigned long)irq_11, KERNEL_CODE_SEGMENT, IDT__PRESENT | IDT__RING0 | IDT__INTERRUPT_GATE);
+    load_idt_entry(0x74, (unsigned long)irq_12, KERNEL_CODE_SEGMENT, IDT__PRESENT | IDT__RING0 | IDT__INTERRUPT_GATE);
+    load_idt_entry(0x75, (unsigned long)irq_13, KERNEL_CODE_SEGMENT, IDT__PRESENT | IDT__RING0 | IDT__INTERRUPT_GATE);
+    load_idt_entry(0x76, (unsigned long)irq_14, KERNEL_CODE_SEGMENT, IDT__PRESENT | IDT__RING0 | IDT__INTERRUPT_GATE);
+    load_idt_entry(0x77, (unsigned long)irq_15, KERNEL_CODE_SEGMENT, IDT__PRESENT | IDT__RING0 | IDT__INTERRUPT_GATE);
 }
 
 inline void irq_ack(uint32_t irq_number)

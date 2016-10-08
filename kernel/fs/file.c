@@ -112,3 +112,50 @@ error_code_t file_close(file_t* file)
 
     return SUCCESS;
 }
+
+error_code_t file_seek(file_t* file, int32_t jmp, seek_type_t seek_type)
+{
+    if(file == NULL)
+    {
+        return INVALID_ARGUMENT;
+    }
+
+    switch(seek_type)
+    {
+        case SEEK_SET:
+        {
+            if(jmp < 0 || jmp >= file->inode->size)
+            {
+                return INVALID_ARGUMENT;
+            }
+
+            file->offset = jmp;
+        }
+        break;
+
+        case SEEK_CUR:
+        {
+            if(file->offset + jmp >= file->inode->size
+                    || file->offset + jmp < 0)
+            {
+                return INVALID_ARGUMENT;
+            }
+
+            file->offset += jmp;
+        }
+        break;
+
+        case SEEK_END:
+        {
+            if(jmp <= 0)
+                file->offset -= jmp;
+            else
+                return INVALID_ARGUMENT;
+        }
+        break;
+
+        default:
+            return INVALID_ARGUMENT;
+    }
+}
+

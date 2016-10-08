@@ -105,9 +105,9 @@ error_code_t free_virtual_address_space(virtual_address_space_t* vmm)
             //Iterate on the page table.
             for(int j = 0; j < PAGE_TABLE_SIZE; j++)
             {
-                if(page_directory[i * 1024 + j] != NULL)
+                if(page_directory[i * PAGE_TABLE_SIZE + j] != NULL)
                 {
-                    free_physical_page((uint32_t)page_directory[i * 1024 + j]);
+                    free_physical_page((uint32_t)page_directory[i * PAGE_TABLE_SIZE + j]);
                 }
             }
 
@@ -166,6 +166,17 @@ static void map_user_virtual_address_to_physical(uint32_t virtual_address, uint3
     edit_entry_attributes(&page_directory[pgd_index * PAGE_TABLE_SIZE + pgt_index], READ_WRITE | PRESENT | USER);
 }
 
+static bool_t page_exists(uint32_t virtual_address)
+{
+    page_table_ptr_t page_directory = (page_table_ptr_t)RECURSIVE_PGD_ADDRESS;
+    page_table_ptr_t page_directory_ptr = (page_table_ptr_t)RECURSIVE_PGT_ADDRESS;
+
+    uint32_t pgd_index = ADDRESS_TO_DIRECTORY_ENTRY(virtual_address);
+    uint32_t pgt_index = ADDRESS_TO_PAGE_TABLE_ENTRY(virtual_address);
+
+    return page_directory_ptr[pgd_index] && page_directory[pgd_index * PAGE_TABLE_SIZE + pgt_index];
+}
+
 /*
  * Will allocate and map to the CURRENT PAGE DIRECTORY, in CR3.
  * Assumes its recursive! (It is if you used the API like a normal person)
@@ -178,9 +189,17 @@ error_code_t mmap(uint32_t virtual_address, uint32_t num_pages)
         return INVALID_ARGUMENT;
     }
 
+    if(PAGE_BOUNDARY(virtual_address) != virtual_address)
+    {
+        return INVALID_ARGUMENT;
+    }
+
     for(int i = virtual_address; i < virtual_address + (num_pages * PAGE_SIZE); i += PAGE_SIZE)
     {
-        map_user_virtual_address_to_physical(i, (uint32_t)allocate_physical_page());
+        if(!page_exists(i))
+        {
+            map_user_virtual_address_to_physical(i, (uint32_t) allocate_physical_page());
+        }
     }
 
     return SUCCESS;

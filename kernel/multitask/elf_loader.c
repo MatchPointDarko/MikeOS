@@ -2,29 +2,58 @@
  * MikeOS: ELF Files loader.
  */
 
-#if 0
-#include "logger.h"
+#include <logging/logger.h>
+#include <multitask/elf.h>
+#include <fs/file.h>
+#include <libc/memory.h>
+#include <error_codes.h>
 
-static bool_t check_elf_header(Elf32_Ehdr* elf_header);
-static bool_t check_elf_supported(Elf32_Ehdr* elf_header);
-static inline Elf32_Shdr* get_elf_first_section_header(Elf32_Ehder* elf_header);
-static inline Elf32_Shdr* get_section_header(Elf32_Ehder* elf_header, unsigned int section_index);
-static void load_sections(Elf32_Ehder* elf_header);
+#define ELF_HEADER_SIZE (sizeof(Elf32_Ehdr))
 
-bool_t load_elf(void* memory_mapped_file)
+static error_code_t check_elf_header(Elf32_Ehdr* elf_header);
+static error_code_t check_elf_supported(Elf32_Ehdr* elf_header);
+static inline Elf32_Shdr* get_section_header(Elf32_Ehdr* elf_header, unsigned int section_index);
+static error_code_t load_segments(task_t* task, Elf32_Ehdr* elf_header, file_t* elf_file);
+
+error_code_t load_elf(task_t* task)
 {
-    Elf32_Ehdr* elf_header = (Elf32_Ehder*)memory_mapped_file;
-
-    if(check_elf_header(elf_header) == false)
+    if(task == NULL)
     {
-        return false;
+        return INVALID_ARGUMENT;
+    }
+
+    file_t* elf_file = file_open(task->name, "r");
+
+    if(elf_file == NULL)
+    {
+        return NO_SUCH_FILE;
+    }
+
+    uint8_t elf_header_buf[ELF_HEADER_SIZE] = {0};
+    Elf32_Ehdr* elf_header = (Elf32_Ehdr*)elf_header_buf;
+
+    if(file_read(elf_file, elf_header_buf, ELF_HEADER_SIZE) == 0)
+    {
+        //This can't be, this file is empty..
+        return FAILURE;
+    }
+
+    if(check_elf_header(elf_header) != SUCCESS)
+    {
+        //This is not an elf file.
+        return FAILURE;
+    }
+
+    if(check_elf_supported(elf_header) != SUCCESS)
+    {
+        return FAILURE;
     }
 
     switch(elf_header->e_type)
     {
         case ET_EXEC:
         {
-            load_sections(memory_mapped_file);
+            load_segments(task, elf_header, elf_file);
         }
         break;
 
@@ -35,116 +64,143 @@ bool_t load_elf(void* memory_mapped_file)
         break;
     }
 
-    return true;
+    return SUCCESS;
 }
 
-static bool_t check_elf_supported(Elf32_Ehdr* elf_header)
+static error_code_t check_elf_supported(Elf32_Ehdr* elf_header)
 {
-    if(check_elf_header(memory_mapped_file) == false)
-    {
-        log_print(LOG_log_print(LOG_ERROR, "Invalid elf file");
-        return false;
-    }
-
     if(elf_header->e_ident[EI_CLASS] != ELFCLASS32)
     {
         log_print(LOG_ERROR, "Unsupported ELF File Class");
-        return false;
+        return INVALID_ARGUMENT;
     }
 
     if(elf_header->e_ident[EI_DATA] != ELFDATA2LSB)
     {
         log_print(LOG_ERROR, "Unsupported ELF File byte order");
-        return false;
+        return INVALID_ARGUMENT;
     }
 
     if(elf_header->e_machine != EM_386)
     {
         log_print(LOG_ERROR, "Unsupported ELF File target");
-        return false;
+        return INVALID_ARGUMENT;
     }
 
     if(elf_header->e_ident[EI_VERSION] != EV_CURRENT)
     {
         log_print(LOG_ERROR, "Unsupported ELF File version");
-        return false;
+        return INVALID_ARGUMENT;
     }
 
     if(elf_header->e_type != ET_REL && elf_header->e_type != ET_EXEC)
     {
         log_print(LOG_ERROR, "Unsupported ELF File type");
-        return false;
+        return INVALID_ARGUMENT;
     }
 
-    return true;
+    return SUCCESS;
 }
 
-static bool_t check_elf_header(Elf32_Ehdr* elf_header)
+static error_code_t check_elf_header(Elf32_Ehdr* elf_header)
 {
     if(elf_header == NULL)
     {
-        return false;
+        return INVALID_ARGUMENT;
     }
 
     if(elf_header->e_ident[EI_MAG0] != ELFMAG0)
     {
-        return false;
+        return INVALID_ARGUMENT;
     }
-        if(elf_header->e_ident[EI_MAG1] != ELFMAG1)
+
+    if(elf_header->e_ident[EI_MAG1] != ELFMAG1)
     {
-        return false;
+        return INVALID_ARGUMENT;
     }
 
     if(elf_header->e_ident[EI_MAG2] != ELFMAG2)
     {
-        return false;
+        return INVALID_ARGUMENT;
     }
 
     if(elf_header->e_ident[EI_MAG3] != ELFMAG3)
     {
-        return false;
+        return INVALID_ARGUMENT;
     }
 
-    return true;
+    //This is an elf header, probably an elf file
+    return SUCCESS;
 }
 
-static inline Elf32_Shdr* get_elf_first_section_header(Elf32_Ehder* elf_header)
+static inline uint32_t load_program_header_table(file_t* elf_file,
+                                                 Elf32_Ehdr* elf_header,
+                                                 Elf32_Phdr* segments_headers,
+                                                 uint32_t number_of_segments)
 {
-    return (Elf32_Shdr*)((unsigned int)elf_header + elf_header->e_shoff);
+    //Assumes the offset is after the header.
+    file_seek(elf_file, elf_header->e_phoff, SEEK_SET);
+    return file_read(elf_file, (uint8_t *)segments_headers, number_of_segments * sizeof(Elf32_Phdr));
 }
 
-static inline Elf32_Shdr* get_section_header(Elf32_Ehder* elf_header, unsigned int section_index)
+static error_code_t load_segments(task_t* task, Elf32_Ehdr* elf_header, file_t* elf_file)
 {
-    return &get_elf_section_header(elf_header)[section_index];
-}
+    uint32_t number_of_segments = elf_header->e_phnum;
 
-static void load_sections(Elf32_Ehder* elf_header)
-{
-    unsigned int number_of_sections = elf_header->e_shnum;
+    Elf32_Phdr segments[number_of_segments];
 
-    for(int i = 0; i < number_of_sections; i++)
+    if(!load_program_header_table(elf_file, elf_header, segments, number_of_segments))
     {
-        Elf32_Shdr* section = get_section_header(elf_header, i);
-        if(section->sh_type == SHT_NOBITS)
-        {
-            if(section->sh_size == 0) continue;
+        //Couldn't read any bytes..
+        return FAILURE;
+    }
 
-            if(section->sh_flags & SHF_ALLOC)
+    for(int i = 0; i < number_of_segments; i++)
+    {
+        if(segments[i].p_type == PT_LOAD)
+        {
+            uint32_t segment_memory_size = segments[i].p_memsz;
+            //Align to page size
+            uint32_t aligned_mem_size = PAGE_BOUNDARY(segment_memory_size);
+
+            if(aligned_mem_size < segment_memory_size)
             {
-                log_print("Loading a section starting at address: %x", section->sh_addr);
-                //Zero this.
-                memset(0, (void *)section->sh_addr, section->sh_size);
+                aligned_mem_size += PAGE_SIZE;
+            }
+
+            uint32_t segment_file_size = segments[i].p_filesz;
+            uint32_t segment_virtual_address = segments[i].p_vaddr;
+
+            if(mmap(segment_virtual_address, (segment_memory_size / PAGE_SIZE) + 1) != SUCCESS)
+            {
+                return FAILURE;
+            }
+
+            file_seek(elf_file, segments[i].p_offset, SEEK_SET);
+            if(!file_read(elf_file, segment_virtual_address, segment_file_size))
+            {
+                return FAILURE;
+            }
+
+            //Zero the leftovers.
+            if(segment_memory_size > segment_file_size)
+            {
+                memset(0, segment_virtual_address + segment_file_size, aligned_mem_size - segment_file_size);
+            }
+
+            //Update the task struct
+            if(segments[i].p_flags == PF_RX)
+            {
+                task->text_begin = segment_virtual_address;
+            }
+
+            if(segments[i].p_flags == PF_RW)
+            {
+                task->data_begin = segment_virtual_address;
             }
         }
-
-        else if(section->sh_type == SHT_PROGBITS)
-        {
-            log_print("Loading a section starting at address: %x", section->sh_addr);
-            // Load this shit.
-            void* section_in_elf = (unsigned int)elf_header + section->sh_offset;
-            memcpy((void *)section->sh_addr, section_in_elf, section->h_size);
-        }
     }
+
+    return SUCCESS;
 }
 
-#endif

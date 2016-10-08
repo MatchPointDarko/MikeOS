@@ -6,9 +6,10 @@ global jmp_to_userspace
 section .text
 
 ; Args:
-; ebp + 8 -> address to jmp to(eip)
-; ebp + 16 -> the user space stack.
+; ebp + 8 -> dword, address to jmp to(eip)
+; ebp + 16 -> dword, the user space stack.
 jmp_to_userspace:
+    mov ebp, esp ; No need to save ebp on the stack
     mov ax, USERSPACE_DATA_SEGEMENT_ENTRY
     mov ds, ax
     mov es, ax
@@ -16,8 +17,10 @@ jmp_to_userspace:
     mov gs, ax
 
     push USERSPACE_DATA_SEGEMENT_ENTRY
-    push dword [ebp + 16]
+    mov eax, [ebp + 8]
+    push eax
     pushf
     push USERSPACE_CODE_SEGEMENT_ENTRY
-    push dword [ebp + 8]
+    mov eax, [ebp + 4]
+    push eax
     iret

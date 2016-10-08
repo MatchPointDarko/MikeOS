@@ -4,42 +4,16 @@
 #include <mm/kmalloc.h>
 #include <mm/virtual_mm_manager.h>
 #include <multitask/userspace_manager.h>
+#include <multitask/task.h>
 #include <mm/kheap.h>
 #include <common.h>
 #include <libc/memory.h>
 #include <libc/string.h>
+#include <gdt.h>
 
 #define KERNEL_STACK_SIZE (PAGE_SIZE)
-
-typedef struct context
-{
-    uint32_t edi;
-    uint32_t esi;
-    uint32_t ebp;
-    uint32_t esp;
-    uint32_t ebx;
-    uint32_t edx;
-    uint32_t ecx;
-    uint32_t eax;
-} context_t;
-
-typedef struct task
-{
-    virtual_address_space_t* vmm;
-    context_t context;
-    uint8_t name[20];
-    uint32_t kernel_ss;
-    uint32_t stack_begin;
-    uint32_t stack_end;
-
-    uint32_t text_begin;
-    uint32_t text_end;
-
-    uint32_t data_begin;
-    uint32_t data_end;
-
-    void* kernel_stack;
-} task_t;
+#define STACK_END_ADDRESS (KERNEL_VIRTUAL_OFFSET - PAGE_SIZE)
+#define STACK_SIZE (5) // 5 pages
 
 task_t* alloc_task(const char* name)
 {
@@ -63,9 +37,9 @@ task_t* alloc_task(const char* name)
         return NULL;
     }
 
-    memcpy(task->name, (char *)name, strlen(name));
+    memcpy(task->name, (char *)name, strlen(name) + 1);
 
-    task->kernel_ss = 0x10;
+    task->kernel_ss = KERNEL_DATA_SEGMENT;
     task->kernel_stack = alloc_kheap_pages(1);
 
     if(task->kernel_stack == NULL)
@@ -102,16 +76,31 @@ task_t* load_task(const char* path)
 {
     task_t* task = alloc_task(path);
 
+    if(task == NULL)
+    {
+        return NULL;
+    }
+
     switch_virtual_address_space(task->vmm);
 
     set_kernel_stack(((uint32_t)task->kernel_stack) + KERNEL_STACK_SIZE);
 
-    /*
     if(load_elf(task) != SUCCESS)
     {
+        free_task(task);
         return NULL;
     }
-    */
 
-    //jmp_to_userspace(task->text_begin, task->stack_end);
+    if(mmap(STACK_END_ADDRESS - STACK_SIZE * PAGE_SIZE, STACK_SIZE) != SUCCESS)
+    {
+        free_task(task);
+        return NULL;
+    }
+
+    task->stack_begin = STACK_END_ADDRESS - STACK_SIZE * PAGE_SIZE;
+    task->stack_end = STACK_END_ADDRESS;
+
+    jmp_to_userspace(task->text_begin, task->stack_end);
+
+    return task;
 }

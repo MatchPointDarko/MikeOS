@@ -1,6 +1,7 @@
 #ifndef MIKE_OS_ELF_H
 #define MIKE_OS_ELF_H
 
+#include <multitask/task.h>
 #include <common.h>
 
 #define ELF_NIDENT	16
@@ -15,16 +16,16 @@
 #define ELF32_ST_BIND(INFO)	((INFO) >> 4)
 #define ELF32_ST_TYPE(INFO)	((INFO) & 0x0F)
 #define ELF32_R_SYM(INFO)	((INFO) >> 8)
-#define ELF32_R_TYPE(INFO)	((uint_8)(INFO))
+#define ELF32_R_TYPE(INFO)	((uint8_t)(INFO))
 
-typedef uint_16 Elf32_Half;
-typedef uint_32 Elf32_Off;
-typedef uint_32 Elf32_Addr;
-typedef uint_32 Elf32_Word;
+typedef uint16_t Elf32_Half;
+typedef uint32_t Elf32_Off;
+typedef uint32_t Elf32_Addr;
+typedef uint32_t Elf32_Word;
 typedef signed int Elf32_Sword;
 
 typedef struct {
-    uint_8		e_ident[ELF_NIDENT];
+    uint8_t		e_ident[ELF_NIDENT];
     Elf32_Half	e_type;
     Elf32_Half	e_machine;
     Elf32_Word	e_version;
@@ -72,6 +73,7 @@ typedef struct {
     Elf32_Word	sh_addralign;
     Elf32_Word	sh_entsize;
 } Elf32_Shdr;
+
 enum ShT_Types {
     SHT_NULL	= 0,   // Null section
     SHT_PROGBITS	= 1,   // Program information
@@ -92,8 +94,8 @@ typedef struct {
     Elf32_Word		st_name;
     Elf32_Addr		st_value;
     Elf32_Word		st_size;
-    uint_8			st_info;
-    uint_8			st_other;
+    uint8_t			st_info;
+    uint8_t			st_other;
     Elf32_Half		st_shndx;
 } Elf32_Sym;
 
@@ -137,5 +139,33 @@ typedef struct {
     Elf32_Word		p_flags;
     Elf32_Word		p_align;
 } Elf32_Phdr;
+
+enum segment_types
+{
+    PT_NULL,
+    PT_LOAD,
+    PT_DYNAMIC,
+    PT_INTERP,
+    PT_NOTE,
+    PT_SHLIB,
+    PT_PHDR,
+    PT_TLS,
+    PT_LOOS,
+    PT_HIOS,
+    PT_LOPROC,
+    PT_HIPROC
+};
+
+enum segment_flags
+{
+    NONE,
+    PF_X,//Execute
+    PF_W,//Write
+    PF_WX,
+    PF_R,//Read
+    PF_RX,
+    PF_RW,
+    PF_RWX
+};
 
 #endif //MIKE_OS_ELF_H
